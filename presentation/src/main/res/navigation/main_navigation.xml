@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/watchlistFragment"
-        android:name="com.borzg.towatchlist.ui.watchlist.WatchlistFragment"
+        android:name="com.borzg.towatchlist.ui.watchlist.WatchListFragment"
         android:label="watchlist_fragment"
-        tools:layout="@layout/fr_watchlist" >
+        tools:layout="@layout/fr_watchlist">
         <action
             android:id="@+id/action_watchlistFragment_to_detailMovieFragment"
             app:destination="@id/detailMovieFragment" />
@@ -21,9 +21,7 @@
         tools:layout="@layout/fr_search">
         <action
             android:id="@+id/action_searchFragment_to_detailMovieFragment"
-            app:destination="@id/detailMovieFragment"
-            app:enterAnim="@anim/enter_detail_fragment"
-            app:exitAnim="@anim/exit_anim" />
+            app:destination="@id/detailMovieFragment" />
     </fragment>
     <fragment
         android:id="@+id/detailMovieFragment"

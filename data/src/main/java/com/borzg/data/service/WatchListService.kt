@@ -5,5 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface WatchListService {
 
-    fun getContentOfWatchList(isViewed: Boolean = true) : Flow<CinemaElement>
+    fun getWatchListContent(isViewed: Boolean = true) : Flow<List<CinemaElement>>
 }

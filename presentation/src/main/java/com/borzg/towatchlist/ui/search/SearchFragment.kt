@@ -19,15 +19,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.borzg.domain.model.search.DummySearchResult
 import com.borzg.domain.model.search.MovieSearchResult
+import com.borzg.domain.model.search.SearchResult
+import com.borzg.towatchlist.R
 import com.borzg.towatchlist.adapters.CinemaSearchAdapter
-import com.borzg.towatchlist.adapters.OnSearchItemClickListener
+import com.borzg.towatchlist.adapters.OnListItemClickListener
 import com.borzg.towatchlist.databinding.FrSearchBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -42,7 +42,7 @@ class SearchFragment : Fragment() {
     private var currentQuery = ""
 
     private val viewModel: SearchViewModel by viewModels()
-    private val onSearchItemClickListener = OnSearchItemClickListener {
+    private val onSearchItemClickListener = OnListItemClickListener<SearchResult> {
         //TODO Разделить на TVsearchResult и MovieSearchResult
         it as MovieSearchResult
         val action = SearchFragmentDirections.actionSearchFragmentToDetailMovieFragment(
@@ -77,9 +77,6 @@ class SearchFragment : Fragment() {
         binding.swipeRefresher.setOnRefreshListener {
             search(currentQuery)
         }
-        adapter.addLoadStateListener {
-            setRefreshState(it.source.refresh is LoadState.Loading)
-        }
     }
 
     private fun bindSearchView() {
@@ -105,8 +102,18 @@ class SearchFragment : Fragment() {
         }
     }
 
+    @MainThread
     private fun setRefreshState(isRefreshing: Boolean) {
         binding.swipeRefresher.isRefreshing = isRefreshing
+    }
+
+    @MainThread
+    private fun showToastMessage(message: String?) {
+        Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showErrorMessage(message: String?) {
+        showToastMessage(message ?: "Error!")
     }
 
     private fun showEmptyListText() {
@@ -116,10 +123,6 @@ class SearchFragment : Fragment() {
         }
     }
 
-    @MainThread
-    private fun showErrorMessage(message: String?) {
-        Toast.makeText(activity, message ?: "Error!", Toast.LENGTH_SHORT).show()
-    }
 
     private fun showSearchList() {
         with(binding) {
@@ -129,21 +132,19 @@ class SearchFragment : Fragment() {
     }
 
     fun search(query: String?) {
-        if (!query.isNullOrEmpty()) {
+        if (!query.isNullOrBlank()) {
             currentQuery = query
             searchJob?.cancel()
-            searchJob = lifecycleScope.launch {
+            searchJob = lifecycleScope.launch(Dispatchers.IO) {
                 viewModel.searchData(query).collectLatest { pagingData ->
                     launch(Dispatchers.Main) {
                         adapter.loadStateFlow.collectLatest { loadStates ->
-                            // TODO внимательно рассмотреть лоадстейты
-                            binding.swipeRefresher.isRefreshing = loadStates.refresh is LoadState.Loading
+                            setRefreshState(loadStates.refresh is LoadState.Loading)
                             val state = loadStates.source.refresh
                             if (state is LoadState.Error) {
                                 showErrorMessage(state.error.message)
                                 viewModel.isError = true
                             }
-                            Log.d("TAG", "search: $loadStates")
                             if (loadStates.source.append is LoadState.NotLoading && adapter.itemCount == 0)
                                 showEmptyListText()
                             else showSearchList()
@@ -154,6 +155,9 @@ class SearchFragment : Fragment() {
                     })
                 }
             }
+        } else {
+            setRefreshState(false)
+            showToastMessage(getString(R.string.search_string_is_empty))
         }
     }
 }

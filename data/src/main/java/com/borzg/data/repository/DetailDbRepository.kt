@@ -15,8 +15,11 @@ class DetailDbRepository @Inject constructor(val cinemaDao: CinemaDao) :
 
     override suspend fun insertMovie(movie: Movie) {
         // TODO изменить время
-        if (cinemaDao.isMovieAddedToDb(movie.id)) {
-            // Do not updates addTime and visibility state in watchList
+        if (movie.isViewed != null) {
+            if (!movie.isViewed!!) {
+                movie.addTime = System.currentTimeMillis()
+                movie.isViewed = true
+            }
             cinemaDao.updateMovie(movie)
         } else {
             movie.addTime = System.currentTimeMillis()

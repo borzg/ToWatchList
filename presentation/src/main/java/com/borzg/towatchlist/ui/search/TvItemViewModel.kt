@@ -1,10 +1,9 @@
 package com.borzg.towatchlist.ui.search
 
-import com.borzg.domain.model.search.MovieSearchResult
 import com.borzg.domain.model.search.TvSearchResult
-import com.borzg.towatchlist.adapters.OnSearchItemClickListener
+import com.borzg.towatchlist.adapters.OnListItemClickListener
 
-class TvItemViewModel(private val tv: TvSearchResult, private val onSearchItemClickListener: OnSearchItemClickListener) {
+class TvItemViewModel(private val tv: TvSearchResult) {
 
     val title: String
         get() = tv.name

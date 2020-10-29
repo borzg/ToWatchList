@@ -12,6 +12,6 @@ class WatchListServiceImpl @Inject constructor() : WatchListService {
     @Inject @DB
     lateinit var watchListDbRepository: WatchListRepository
 
-    override fun getContentOfWatchList(isViewed: Boolean): Flow<CinemaElement> =
+    override fun getWatchListContent(isViewed: Boolean): Flow<List<CinemaElement>> =
         watchListDbRepository.getCinemaElementsFromWatchList(isViewed)
 }

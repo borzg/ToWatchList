@@ -4,21 +4,19 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
 import com.borzg.domain.model.search.MovieSearchResult
 import com.borzg.domain.model.search.SearchResult
 import com.borzg.domain.model.search.TvSearchResult
-import com.borzg.towatchlist.R
 import com.borzg.towatchlist.adapters.viewholders.MovieSearchItemViewHolder
 import com.borzg.towatchlist.adapters.viewholders.SearchViewHolder
 import com.borzg.towatchlist.adapters.viewholders.TvSearchItemViewHolder
-import com.borzg.towatchlist.databinding.LiMovieBinding
-import com.borzg.towatchlist.databinding.LiTvBinding
+import com.borzg.towatchlist.databinding.LiMovieSearchBinding
+import com.borzg.towatchlist.databinding.LiTvSearchBinding
 
 const val MOVIE_TYPE = 1
 const val TV_TYPE = 2
 
-class CinemaSearchAdapter(private val onItemClickListener : OnSearchItemClickListener) : PagingDataAdapter<SearchResult, SearchViewHolder>(SearchItemDiffCallback) {
+class CinemaSearchAdapter(private val onItemClickListener : OnListItemClickListener<SearchResult>) : PagingDataAdapter<SearchResult, SearchViewHolder>(SearchItemDiffCallback) {
 
     override fun getItemViewType(position: Int): Int =
         when (getItem(position)) {
@@ -30,8 +28,8 @@ class CinemaSearchAdapter(private val onItemClickListener : OnSearchItemClickLis
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         when (viewType) {
-            MOVIE_TYPE -> return MovieSearchItemViewHolder(LiMovieBinding.inflate(inflater, parent, false))
-            TV_TYPE -> return TvSearchItemViewHolder(LiTvBinding.inflate(inflater, parent, false))
+            MOVIE_TYPE -> return MovieSearchItemViewHolder(LiMovieSearchBinding.inflate(inflater, parent, false))
+            TV_TYPE -> return TvSearchItemViewHolder(LiTvSearchBinding.inflate(inflater, parent, false))
         }
         throw java.lang.IllegalStateException("Wrong viewType")
     }
