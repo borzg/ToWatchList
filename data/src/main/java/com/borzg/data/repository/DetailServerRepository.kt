@@ -3,16 +3,22 @@ package com.borzg.data.repository
 import com.borzg.data.api.TmdbApi
 import com.borzg.domain.model.Movie
 import com.borzg.domain.repository.DetailCinemaRepository
-import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class DetailServerRepository @Inject constructor(val tmdbApi: TmdbApi) :
     DetailCinemaRepository {
 
-    override fun getMovie(movieId: Int): Single<Movie> =
-        tmdbApi.getMovie(movieId)
+    override fun getMovie(movieId: Int): Flow<Movie?> = flow {
+        emit(tmdbApi.getMovie(movieId))
+    }
 
-    override fun insertMovie(movie: Movie) {
+    override suspend fun insertMovie(movie: Movie) {
+        // Do nothing
+    }
+
+    override suspend fun updateMovie(movie: Movie) {
         // Do nothing
     }
 

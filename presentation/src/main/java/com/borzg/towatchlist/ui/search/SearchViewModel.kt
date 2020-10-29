@@ -11,31 +11,25 @@ import androidx.paging.cachedIn
 import com.borzg.data.service.SearchService
 import com.borzg.domain.model.search.SearchResult
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 
 class SearchViewModel @ViewModelInject constructor(private val searchService: SearchService) : ViewModel() {
-
-    private var _isDataTheSame = MutableLiveData<Boolean>(false)
-    val isDataTheSame: LiveData<Boolean>
-        get() = _isDataTheSame
 
     private var currentQueryValue: String? = null
 
     private var currentSearchResult: Flow<PagingData<SearchResult>>? = null
 
+    var isError: Boolean = false
+
     fun searchData(query: String): Flow<PagingData<SearchResult>> {
         val lastResult = currentSearchResult
-        if (query == currentQueryValue && lastResult != null) {
-            _isDataTheSame.postValue(true)
-            return lastResult
+        if (query == currentQueryValue && !isError) {
+            return lastResult!!
         }
-        _isDataTheSame.postValue(false)
         currentQueryValue = query
         val newResult: Flow<PagingData<SearchResult>> = searchService.getMultiSearchResult(query)
             .cachedIn(viewModelScope)
+        isError = false
         currentSearchResult = newResult
         return newResult
     }

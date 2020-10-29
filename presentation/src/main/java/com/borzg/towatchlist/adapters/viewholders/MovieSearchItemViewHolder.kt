@@ -13,6 +13,7 @@ import com.borzg.towatchlist.adapters.OnSearchItemClickListener
 import com.borzg.towatchlist.databinding.LiMovieBinding
 import com.borzg.towatchlist.ui.search.MovieItemViewModel
 import com.borzg.towatchlist.utils.loadImageFromUrl
+import com.borzg.towatchlist.utils.loadImageToCache
 import com.bumptech.glide.Glide
 
 class MovieSearchItemViewHolder(val binding: LiMovieBinding) :
@@ -24,6 +25,7 @@ class MovieSearchItemViewHolder(val binding: LiMovieBinding) :
             movieTitle.text = viewModel.title
             releaseDate.text = "2:00"
             loadImageFromUrl(viewModel.posterPath, poster)
+            loadImageToCache(item.backdrop_path, poster.context)
             root.setOnClickListener {
                 onSearchItemClickListener.onItemClick(item)
             }

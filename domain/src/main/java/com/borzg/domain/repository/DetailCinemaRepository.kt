@@ -1,12 +1,14 @@
 package com.borzg.domain.repository
 
 import com.borzg.domain.model.Movie
-import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
 
 interface DetailCinemaRepository {
 
-    fun getMovie(movieId: Int): Single<Movie>
+    fun getMovie(movieId: Int): Flow<Movie?>
 
-    fun insertMovie(movie: Movie)
+    suspend fun insertMovie(movie: Movie)
+
+    suspend fun updateMovie(movie: Movie)
 
 }

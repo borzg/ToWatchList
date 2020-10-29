@@ -6,6 +6,7 @@ import com.borzg.domain.model.common.TmdbResponse
 import com.borzg.domain.model.search.SearchResult
 import com.borzg.domain.model.tv.Tv
 import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
 import retrofit2.http.*
 
 
@@ -26,7 +27,7 @@ interface TmdbApi {
     suspend fun getMultiSearchResult(@Query("query") query: String, @Query("page") pageNumber: Int = 1) : TmdbResponse<SearchResult>
 
     @GET("movie/{movieId}")
-    fun getMovie(@Path("movieId") movieId : Int) : Single<Movie>
+    suspend fun getMovie(@Path("movieId") movieId : Int) : Movie
 
     @GET("person/{person_id}")
     fun getPerson(@Path("person_id") personId : Int) : Single<Person>

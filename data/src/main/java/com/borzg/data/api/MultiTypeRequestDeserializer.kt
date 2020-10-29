@@ -1,5 +1,7 @@
 package com.borzg.data.api
 
+import android.util.Log
+import com.borzg.domain.model.search.DummySearchResult
 import com.borzg.domain.model.search.MovieSearchResult
 import com.borzg.domain.model.search.SearchResult
 import com.borzg.domain.model.search.TvSearchResult
@@ -25,7 +27,7 @@ class MultiTypeRequestDeserializer : JsonDeserializer<SearchResult> {
             when (jsonObject.get("media_type").asString) {
                 "movie" -> return gson.fromJson(jsonObject, MovieSearchResult::class.java)
                 "tv" -> return gson.fromJson(jsonObject, TvSearchResult::class.java)
-//                "person" -> return gson.fromJson(jsonObject, PersonSearchResult::class.java)
+                "person" -> return DummySearchResult()
             }
         }
         // TODO exception

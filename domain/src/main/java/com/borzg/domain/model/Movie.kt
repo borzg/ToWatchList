@@ -1,16 +1,12 @@
 package com.borzg.domain.model
 
-import androidx.room.Entity
-import androidx.room.Ignore
-import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
+import androidx.room.*
+import com.borzg.domain.model.common.CinemaElement
 import com.google.gson.annotations.SerializedName
 
-@Entity
+@Entity(tableName = "movie")
 data class Movie(
-        @SerializedName("id")
-        @PrimaryKey
-        val id: Int,
+        @PrimaryKey @SerializedName("id") val id: Int,
         @SerializedName("backdrop_path") val backdrop_path: String?,
         @SerializedName("budget") val budget: Int,
         @SerializedName("imdb_id") val imdbId: String?,
@@ -25,6 +21,8 @@ data class Movie(
         @SerializedName("title") val title: String,
         @SerializedName("vote_average") val vote_average: Double,
         @SerializedName("vote_count") val vote_count: Int
-) {
+) : CinemaElement(id){
         @Ignore @SerializedName("production_countries") var productionCountries: List<Country>? = null
+        @ColumnInfo(typeAffinity = ColumnInfo.BLOB) var poster: ByteArray? = null
+        @ColumnInfo(typeAffinity = ColumnInfo.BLOB) var backdrop: ByteArray? = null
 }

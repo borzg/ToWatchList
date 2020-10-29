@@ -7,5 +7,5 @@ open class SearchResult {
     var media_type: String? = null
 
     @SerializedName("id")
-    var id : Int? = null
+    var id : Int = -1
 }

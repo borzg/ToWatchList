@@ -14,7 +14,6 @@ class MultiSearchSource(val repository: CinemaSearchRepository, val query: Strin
         val position = params.key ?: START_POSITION
         return try {
             val results = repository.getMultiSearchResult(query, position)
-            Log.d("TAG", "load: $results")
             LoadResult.Page(
                 data = results,
                 prevKey = if (position == START_POSITION) null else position - 1,

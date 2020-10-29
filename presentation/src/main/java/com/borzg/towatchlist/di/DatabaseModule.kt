@@ -16,6 +16,7 @@ object DatabaseModule {
     @Provides
     fun provideCinemaDatabase(@ApplicationContext context: Context): CinemaDatabase =
         Room.databaseBuilder(context, CinemaDatabase::class.java, "app_db")
+            .fallbackToDestructiveMigration()
             .build()
 
     @Provides

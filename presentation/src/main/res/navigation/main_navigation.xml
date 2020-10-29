@@ -9,10 +9,50 @@
         android:id="@+id/watchlistFragment"
         android:name="com.borzg.towatchlist.ui.watchlist.WatchlistFragment"
         android:label="watchlist_fragment"
-        tools:layout="@layout/watchlist_fragment" />
+        tools:layout="@layout/fr_watchlist" >
+        <action
+            android:id="@+id/action_watchlistFragment_to_detailMovieFragment"
+            app:destination="@id/detailMovieFragment" />
+    </fragment>
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.borzg.towatchlist.ui.search.SearchFragment"
         android:label="search_fragment"
-        tools:layout="@layout/search_fragment" />
+        tools:layout="@layout/fr_search">
+        <action
+            android:id="@+id/action_searchFragment_to_detailMovieFragment"
+            app:destination="@id/detailMovieFragment"
+            app:enterAnim="@anim/enter_detail_fragment"
+            app:exitAnim="@anim/exit_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailMovieFragment"
+        android:name="com.borzg.towatchlist.ui.detail.movie.DetailMovieFragment"
+        android:label="DetailMovieFragment">
+        <argument
+            android:name="id"
+            app:argType="integer" />
+        <argument
+            android:name="title"
+            android:defaultValue='"'
+            app:argType="string" />
+        <argument
+            android:name="original_title"
+            app:argType="string" />
+        <argument
+            android:name="poster_url"
+            android:defaultValue='""'
+            app:argType="string" />
+        <argument
+            android:name="release_date"
+            app:argType="string" />
+        <argument
+            android:name="backdrop_path"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailTvFragment"
+        android:name="com.borzg.towatchlist.ui.detail.tv.DetailTvFragment"
+        android:label="detail_tv_fragment"
+        tools:layout="@layout/detail_tv_fragment" />
 </navigation>

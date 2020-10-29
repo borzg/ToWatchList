@@ -3,6 +3,7 @@ package com.borzg.domain.model.tv
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
+import com.borzg.domain.model.common.CinemaElement
 import com.google.gson.annotations.SerializedName
 
 @Entity
@@ -25,7 +26,7 @@ data class Tv (
 	@SerializedName("type") val type : String,
 	@SerializedName("vote_average") val voteAverage : Float,
 	@SerializedName("vote_count") val voteCount : Int
-) {
+) : CinemaElement(id) {
 	@Ignore @SerializedName("episode_run_time") var episode_run_time : List<Int>? = null
 	@Ignore  @SerializedName("languages") val languages : List<String>? = null
 	@Ignore  @SerializedName("last_episode_to_air") val lastEpisodeToAir : Episode? = null
