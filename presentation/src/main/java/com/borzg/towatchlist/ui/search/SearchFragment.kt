@@ -1,7 +1,6 @@
 package com.borzg.towatchlist.ui.search
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +10,7 @@ import androidx.annotation.MainThread
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.filter
@@ -22,40 +22,38 @@ import com.borzg.domain.model.search.MovieSearchResult
 import com.borzg.domain.model.search.SearchResult
 import com.borzg.towatchlist.R
 import com.borzg.towatchlist.adapters.CinemaSearchAdapter
-import com.borzg.towatchlist.adapters.OnListItemClickListener
 import com.borzg.towatchlist.databinding.FrSearchBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class SearchFragment : Fragment() {
-
-    companion object {
-        fun newInstance() = SearchFragment()
-    }
 
     private var searchJob: Job? = null
     private lateinit var binding: FrSearchBinding
     private var currentQuery = ""
 
     private val viewModel: SearchViewModel by viewModels()
-    private val onSearchItemClickListener = OnListItemClickListener<SearchResult> {
-        //TODO Разделить на TVsearchResult и MovieSearchResult
-        it as MovieSearchResult
-        val action = SearchFragmentDirections.actionSearchFragmentToDetailMovieFragment(
-            it.id,
-            it.title,
-            it.original_title,
-            it.posterPath ?: "",
-            it.release_date,
-            it.backdrop_path ?: ""
+
+    private val adapter: CinemaSearchAdapter = CinemaSearchAdapter { searchResult, posterCard ->
+        searchResult as MovieSearchResult
+        val extras = FragmentNavigatorExtras(
+            posterCard to (searchResult.posterPath ?: "")
         )
-        findNavController().navigate(action)
+        val action = SearchFragmentDirections.actionSearchFragmentToDetailMovieFragment(
+            searchResult.id,
+            searchResult.title,
+            searchResult.original_title,
+            searchResult.posterPath ?: "",
+            searchResult.release_date,
+            searchResult.backdrop_path ?: ""
+        )
+        findNavController().navigate(action, extras)
     }
-    private val adapter: CinemaSearchAdapter = CinemaSearchAdapter(onSearchItemClickListener)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -150,9 +148,7 @@ class SearchFragment : Fragment() {
                             else showSearchList()
                         }
                     }
-                    adapter.submitData(pagingData.filter {
-                        it !is DummySearchResult
-                    })
+                    adapter.submitData(pagingData)
                 }
             }
         } else {

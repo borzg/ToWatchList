@@ -5,5 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface WatchListRepository {
 
-    fun getCinemaElementsFromWatchList(isViewed: Boolean = true): Flow<List<CinemaElement>>
+   suspend fun setWatchedState(isWatched: Boolean, cinemaElement: CinemaElement)
+
+    fun getCinemaElementsFromWatchList(isDisplayed: Boolean = true): Flow<List<CinemaElement>>
 }

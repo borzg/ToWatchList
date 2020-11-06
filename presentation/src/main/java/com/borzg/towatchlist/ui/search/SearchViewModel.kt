@@ -8,12 +8,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.filter
 import com.borzg.data.service.SearchService
+import com.borzg.domain.model.search.DummySearchResult
 import com.borzg.domain.model.search.SearchResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 
-class SearchViewModel @ViewModelInject constructor(private val searchService: SearchService) : ViewModel() {
+class SearchViewModel @ViewModelInject constructor(private val searchService: SearchService) :
+    ViewModel() {
 
     private var currentQueryValue: String? = null
 
@@ -27,8 +30,8 @@ class SearchViewModel @ViewModelInject constructor(private val searchService: Se
             return lastResult!!
         }
         currentQueryValue = query
-        val newResult: Flow<PagingData<SearchResult>> = searchService.getMultiSearchResult(query)
-            .cachedIn(viewModelScope)
+        val newResult: Flow<PagingData<SearchResult>> =
+            searchService.getMultiSearchResult(query).cachedIn(viewModelScope)
         isError = false
         currentSearchResult = newResult
         return newResult

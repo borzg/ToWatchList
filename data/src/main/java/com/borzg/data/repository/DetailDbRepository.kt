@@ -3,7 +3,6 @@ package com.borzg.data.repository
 import com.borzg.data.database.CinemaDao
 import com.borzg.domain.model.Movie
 import com.borzg.domain.repository.DetailCinemaRepository
-import com.bumptech.glide.Glide
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -15,15 +14,15 @@ class DetailDbRepository @Inject constructor(val cinemaDao: CinemaDao) :
 
     override suspend fun insertMovie(movie: Movie) {
         // TODO изменить время
-        if (movie.isViewed != null) {
-            if (!movie.isViewed!!) {
+        if (movie.isDisplayed != null) {
+            if (!movie.isDisplayed!!) {
                 movie.addTime = System.currentTimeMillis()
-                movie.isViewed = true
+                movie.isDisplayed = true
             }
             cinemaDao.updateMovie(movie)
         } else {
             movie.addTime = System.currentTimeMillis()
-            movie.isViewed = true
+            movie.isDisplayed = true
             cinemaDao.insertMovie(movie)
         }
     }

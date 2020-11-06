@@ -17,7 +17,7 @@ android {
         versionName "1.0"
 
         buildConfigField "String", "TMDB_URL", '"https://www.themoviedb.org/"'
-        buildConfigField "String", "TMDB_IMAGE_URL", '"https://image.tmdb.org/t/p/w200"'
+        buildConfigField "String", "TMDB_IMAGE_URL", '"https://image.tmdb.org/t/p/"'
         buildConfigField "String", "TMDB_API_URL", '"https://api.themoviedb.org/3/"'
         buildConfigField "String", "TMDB_API_KEY", '"f994e496e6421324b52dd0128305a62d"'
 
@@ -60,6 +60,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     implementation 'com.github.bumptech.glide:glide:4.11.0'
+    kapt 'com.github.bumptech.glide:compiler:4.11.0'
     implementation 'jp.wasabeef:glide-transformations:4.0.0'
 
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"

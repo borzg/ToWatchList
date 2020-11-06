@@ -1,6 +1,5 @@
 package com.borzg.data.service.implementations
 
-import android.util.Log
 import com.borzg.domain.model.DB
 import com.borzg.domain.model.Server
 import com.borzg.domain.repository.DetailCinemaRepository
@@ -28,7 +27,7 @@ class DetailMovieServiceImpl @Inject constructor() : DetailMovieService {
             val resultMovie = movieFromServer!!
             if (movieFromDb != null) {
                 resultMovie.addTime = movieFromDb.addTime
-                resultMovie.isViewed = movieFromDb.isViewed
+                resultMovie.isDisplayed = movieFromDb.isDisplayed
                 if (resultMovie != movieFromDb) detailDBCinemaRepository.updateMovie(resultMovie)
             }
             resultMovie

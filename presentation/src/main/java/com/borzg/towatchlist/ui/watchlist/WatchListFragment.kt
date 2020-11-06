@@ -6,37 +6,30 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.borzg.domain.model.Movie
 import com.borzg.domain.model.common.CinemaElement
-import com.borzg.towatchlist.adapters.OnListItemClickListener
 import com.borzg.towatchlist.adapters.WatchListAdapter
 import com.borzg.towatchlist.databinding.FrWatchlistBinding
-import com.borzg.towatchlist.ui.search.SearchFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class WatchListFragment : Fragment() {
 
-    private val onListItemClickListener = OnListItemClickListener<CinemaElement> {
-        it as Movie
-//        val action = WatchListFragmentDirections.actionWatchlistFragmentToDetailMovieFragment(
-//            it.id,
-//            it.title,
-//            it.original_title,
-//            it.posterPath ?: "",
-//            it.releaseDate,
-//            it.backdrop_path ?: ""
-//        )
-//        findNavController().navigate(action)
-    }
-
     private val viewModel: WatchlistViewModel by viewModels()
-    private lateinit var binding : FrWatchlistBinding
-    private val adapter = WatchListAdapter(onListItemClickListener)
+    private lateinit var binding: FrWatchlistBinding
+
+    private val adapter = WatchListAdapter(
+        { cinemaElement ->
+
+        },
+        { cinemaElement, isWatched ->
+            viewModel.setWatchedState(isWatched, cinemaElement)
+        })
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,13 +42,14 @@ class WatchListFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel.getContentFromWatchList().observe(viewLifecycleOwner, {
-            adapter.submitList(it)
+        viewModel.getContentFromWatchList().observe(viewLifecycleOwner, { list ->
+            adapter.submitList(list)
         })
     }
 
     private fun bindWatchList() {
         with(binding.watchList) {
+            (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
             layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)
             adapter = this@WatchListFragment.adapter
             addItemDecoration(DividerItemDecoration(context, RecyclerView.VERTICAL))

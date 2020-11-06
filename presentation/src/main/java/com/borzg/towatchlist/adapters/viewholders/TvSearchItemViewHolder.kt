@@ -1,23 +1,24 @@
 package com.borzg.towatchlist.adapters.viewholders
 
+import androidx.cardview.widget.CardView
 import com.borzg.domain.model.search.SearchResult
 import com.borzg.domain.model.search.TvSearchResult
-import com.borzg.towatchlist.adapters.OnListItemClickListener
 import com.borzg.towatchlist.databinding.LiTvSearchBinding
-import com.borzg.towatchlist.ui.search.TvItemViewModel
+import com.borzg.towatchlist.ui.search.TvSearchItemViewModel
 import com.borzg.towatchlist.utils.loadImageFromUrl
 
 class TvSearchItemViewHolder(val binding: LiTvSearchBinding) :
     SearchViewHolder(binding.root) {
 
-    override fun bind(item : SearchResult, onListItemClickListener: OnListItemClickListener<SearchResult>) {
-        val viewModel = TvItemViewModel(item as TvSearchResult)
+    override fun bind(item: SearchResult, onListItemClickListener: (SearchResult, CardView) -> Unit) {
+        val viewModel = TvSearchItemViewModel(item as TvSearchResult)
         with(binding) {
             tvTitle.text = viewModel.title
-            releaseDate.text = "2:00"
+            firstAirDate.text = viewModel.firstAirDate
+            posterCard.transitionName = viewModel.posterPath
             loadImageFromUrl(viewModel.posterPath, poster)
             root.setOnClickListener {
-                onListItemClickListener.onItemClick(item)
+                onListItemClickListener.invoke(item, posterCard)
             }
         }
     }

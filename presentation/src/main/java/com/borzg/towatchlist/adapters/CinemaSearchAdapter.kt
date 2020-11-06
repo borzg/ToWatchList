@@ -2,6 +2,8 @@ package com.borzg.towatchlist.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.cardview.widget.CardView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import com.borzg.domain.model.search.MovieSearchResult
@@ -16,7 +18,8 @@ import com.borzg.towatchlist.databinding.LiTvSearchBinding
 const val MOVIE_TYPE = 1
 const val TV_TYPE = 2
 
-class CinemaSearchAdapter(private val onItemClickListener : OnListItemClickListener<SearchResult>) : PagingDataAdapter<SearchResult, SearchViewHolder>(SearchItemDiffCallback) {
+class CinemaSearchAdapter(private val onItemClickListener: (SearchResult, CardView) -> Unit) :
+    PagingDataAdapter<SearchResult, SearchViewHolder>(SearchItemDiffCallback) {
 
     override fun getItemViewType(position: Int): Int =
         when (getItem(position)) {
@@ -28,8 +31,20 @@ class CinemaSearchAdapter(private val onItemClickListener : OnListItemClickListe
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         when (viewType) {
-            MOVIE_TYPE -> return MovieSearchItemViewHolder(LiMovieSearchBinding.inflate(inflater, parent, false))
-            TV_TYPE -> return TvSearchItemViewHolder(LiTvSearchBinding.inflate(inflater, parent, false))
+            MOVIE_TYPE -> return MovieSearchItemViewHolder(
+                LiMovieSearchBinding.inflate(
+                    inflater,
+                    parent,
+                    false
+                )
+            )
+            TV_TYPE -> return TvSearchItemViewHolder(
+                LiTvSearchBinding.inflate(
+                    inflater,
+                    parent,
+                    false
+                )
+            )
         }
         throw java.lang.IllegalStateException("Wrong viewType")
     }

@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 
 @Entity(tableName = "movie")
 data class Movie(
-        @PrimaryKey @SerializedName("id") val id: Int,
+        @PrimaryKey @SerializedName("id") override val id: Int,
         @SerializedName("backdrop_path") val backdrop_path: String?,
         @SerializedName("budget") val budget: Int,
         @SerializedName("imdb_id") val imdbId: String?,
@@ -21,7 +21,7 @@ data class Movie(
         @SerializedName("title") val title: String,
         @SerializedName("vote_average") val vote_average: Double,
         @SerializedName("vote_count") val vote_count: Int
-) : CinemaElement(id){
+) : CinemaElement(){
         @Ignore @SerializedName("production_countries") var productionCountries: List<Country>? = null
         @ColumnInfo(typeAffinity = ColumnInfo.BLOB) var poster: ByteArray? = null
         @ColumnInfo(typeAffinity = ColumnInfo.BLOB) var backdrop: ByteArray? = null

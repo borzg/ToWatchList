@@ -10,11 +10,11 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface CinemaDao {
 
-    @Query("SELECT * FROM movie WHERE isViewed = :isViewed")
-    fun getMoviesFromWatchList(isViewed: Int = 1): Flow<List<Movie>>
+    @Query("SELECT * FROM movie WHERE isDisplayed = :isDisplayed")
+    fun getMoviesFromWatchList(isDisplayed: Int = 1): Flow<List<Movie>>
 
-    @Query("SELECT * FROM tv WHERE isViewed = :isViewed")
-    fun getTvsFromWatchList(isViewed: Int = 1): Flow<List<Tv>>
+    @Query("SELECT * FROM tv WHERE isDisplayed = :isDisplayed")
+    fun getTvsFromWatchList(isDisplayed: Int = 1): Flow<List<Tv>>
 
     @Query("SELECT * FROM movie WHERE id = :movieId")
     fun getMovie(movieId: Int): Flow<Movie>
@@ -24,5 +24,8 @@ interface CinemaDao {
 
     @Update
     suspend fun updateMovie(movie: Movie)
+
+    @Update
+    suspend fun updateTv(tv: Tv)
 
 }

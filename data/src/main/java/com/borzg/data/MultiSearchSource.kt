@@ -2,6 +2,7 @@ package com.borzg.data
 
 import android.util.Log
 import androidx.paging.PagingSource
+import com.borzg.domain.model.search.DummySearchResult
 import com.borzg.domain.model.search.SearchResult
 import com.borzg.domain.repository.CinemaSearchRepository
 
@@ -13,7 +14,7 @@ class MultiSearchSource(val repository: CinemaSearchRepository, val query: Strin
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SearchResult> {
         val position = params.key ?: START_POSITION
         return try {
-            val results = repository.getMultiSearchResult(query, position)
+            val results = repository.getMultiSearchResult(query, position).filter { it !is DummySearchResult }
             LoadResult.Page(
                 data = results,
                 prevKey = if (position == START_POSITION) null else position - 1,

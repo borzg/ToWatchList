@@ -10,7 +10,7 @@ import com.google.gson.annotations.SerializedName
 data class Tv (
 	@SerializedName("id")
 	@PrimaryKey
-	val id : Int,
+	override val id : Int,
 	@SerializedName("backdrop_path") val backdropPath : String?,
 	@SerializedName("first_air_date") val firstAirDate : String,
 	@SerializedName("in_production") val inProduction : Boolean,
@@ -26,7 +26,7 @@ data class Tv (
 	@SerializedName("type") val type : String,
 	@SerializedName("vote_average") val voteAverage : Float,
 	@SerializedName("vote_count") val voteCount : Int
-) : CinemaElement(id) {
+) : CinemaElement() {
 	@Ignore @SerializedName("episode_run_time") var episode_run_time : List<Int>? = null
 	@Ignore  @SerializedName("languages") val languages : List<String>? = null
 	@Ignore  @SerializedName("last_episode_to_air") val lastEpisodeToAir : Episode? = null

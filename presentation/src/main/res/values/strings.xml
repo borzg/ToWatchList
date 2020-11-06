@@ -18,4 +18,10 @@
     <string name="something_went_wrong">Oops! Something went wrong</string>
     <string name="nothing_found">Nothing found</string>
     <string name="search_string_is_empty">Search string is empty</string>
+    <string name="budget">Budget</string>
+    <string name="revenue">Revenue</string>
+    <string name="original_language">Original language</string>
+    <string name="added_at">Added at</string>
+    <string name="watched">Watched!</string>
+    <string name="mark_as_watched">Mark as watched</string>
 </resources>
