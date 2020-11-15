@@ -1,17 +1,10 @@
 <resources>
     <string name="app_name">ToWatchList</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_main" translatable="false">MainActivity</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="lorem" translatable="false">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+
     <string name="watchlist">Watchlist</string>
     <string name="search">Search</string>
     <string name="added_to_watchList">Added to WatchList!</string>
@@ -22,6 +15,45 @@
     <string name="revenue">Revenue</string>
     <string name="original_language">Original language</string>
     <string name="added_at">Added at</string>
-    <string name="watched">Watched!</string>
-    <string name="mark_as_watched">Mark as watched</string>
+    <string name="added_on">Added:</string>
+    <string name="viewed">Viewed</string>
+    <string name="mark_as_viewed">Mark as viewed</string>
+    <string name="movie_overview">Movie overview</string>
+    <string name="check_on_imdb">Check on IMDb</string>
+    <string name="vote_count_with_number">Vote count: %1$d</string>
+    <string name="nothing_to_show">Nothing to show</string>
+    <string name="views_for_all_time">Views for all time</string>
+    <string name="views_for_month">For month</string>
+    <string name="views_for_week">For week</string>
+    <string name="probably_no_internet_connection">Something went wrong\nProbably you have problems with internet connection</string>
+    <string name="overview">Overview</string>
+    <string name="seasons_count">Seasons count:</string>
+    <string name="episode_runtime">Episode runtime: %1$s</string>
+    <string name="today">today</string>
+    <string name="yesterday">yesterday</string>
+    <string name="last_week">last week</string>
+    <string name="last_month">last month</string>
+    <string name="last_year">last year</string>
+    <string name="this_week">this week</string>
+    <string name="this_month">this month</string>
+    <string name="this_year">this year</string>
+    <string name="long_ago">long ago</string>
+    <string name="your_watchlist_is_empty">Your Watchlist is empty</string>
+    <string name="no_search_text">Use the search to find movies and TV series</string>
+    <string name="date_time_error">Error. Probably there is any problem with your devices date an time</string>
+
+    <string-array name="at_month">
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
+        <item>September</item>
+        <item>October</item>
+        <item>November</item>
+        <item>December</item>
+    </string-array>
 </resources>

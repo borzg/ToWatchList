@@ -2,23 +2,25 @@ package com.borzg.towatchlist.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
-import androidx.cardview.widget.CardView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import com.borzg.domain.model.search.MovieSearchResult
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
+import com.borzg.domain.model.common.CinemaElement
 import com.borzg.domain.model.search.SearchResult
-import com.borzg.domain.model.search.TvSearchResult
-import com.borzg.towatchlist.adapters.viewholders.MovieSearchItemViewHolder
-import com.borzg.towatchlist.adapters.viewholders.SearchViewHolder
-import com.borzg.towatchlist.adapters.viewholders.TvSearchItemViewHolder
+import com.borzg.domain.model.search.SearchResult.MovieSearchResult
+import com.borzg.domain.model.search.SearchResult.TvSearchResult
 import com.borzg.towatchlist.databinding.LiMovieSearchBinding
 import com.borzg.towatchlist.databinding.LiTvSearchBinding
+import com.borzg.towatchlist.ui.search.viewholders.MovieSearchItemViewHolder
+import com.borzg.towatchlist.ui.search.viewholders.SearchViewHolder
+import com.borzg.towatchlist.ui.search.viewholders.TvSearchItemViewHolder
+import com.borzg.towatchlist.ui.watchlist.viewholders.WatchListViewHolder
 
 const val MOVIE_TYPE = 1
 const val TV_TYPE = 2
 
-class CinemaSearchAdapter(private val onItemClickListener: (SearchResult, CardView) -> Unit) :
+class CinemaSearchAdapter(private val onItemClickListener: (SearchResult) -> Unit) :
     PagingDataAdapter<SearchResult, SearchViewHolder>(SearchItemDiffCallback) {
 
     override fun getItemViewType(position: Int): Int =
@@ -56,16 +58,15 @@ class CinemaSearchAdapter(private val onItemClickListener: (SearchResult, CardVi
     object SearchItemDiffCallback : DiffUtil.ItemCallback<SearchResult>() {
 
         override fun areItemsTheSame(oldItem: SearchResult, newItem: SearchResult): Boolean {
-            if (!oldItem.media_type.equals(newItem.media_type)) return false
+            if (oldItem.media_type != newItem.media_type) return false
             return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(oldItem: SearchResult, newItem: SearchResult): Boolean {
-            if (!oldItem.media_type.equals(newItem.media_type)) return false
+            if (oldItem.media_type != newItem.media_type) return false
             return oldItem == newItem
         }
 
     }
-
 
 }

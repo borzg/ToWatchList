@@ -3,6 +3,7 @@ package com.borzg.towatchlist.ui.watchlist
 import com.borzg.domain.model.Movie
 import com.borzg.towatchlist.utils.formatToUsDollars
 import com.borzg.towatchlist.utils.getDate
+import com.borzg.towatchlist.utils.getYearFromDate
 
 class MovieWatchListItemViewModel(private val movie: Movie) {
 
@@ -10,7 +11,10 @@ class MovieWatchListItemViewModel(private val movie: Movie) {
         get() = movie.title
 
     val releaseDate: String
-        get() = movie.releaseDate
+        get() = movie.releaseDate.getYearFromDate()
+
+    val originalTitle: String
+        get() = movie.original_title
 
     val revenue
         get() = movie.revenue.formatToUsDollars()
@@ -18,8 +22,8 @@ class MovieWatchListItemViewModel(private val movie: Movie) {
     val originalLanguage: String
         get() = movie.originalLanguage
 
-    val addTime: String
-        get() = movie.addTime?.getDate() ?: ""
+    val addTime: Long?
+        get() = movie.addTime
 
     val budget: String
         get() = movie.budget.formatToUsDollars()

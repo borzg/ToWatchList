@@ -1,14 +1,22 @@
 package com.borzg.domain.repository
 
 import com.borzg.domain.model.Movie
+import com.borzg.domain.model.search.SearchResult
+import com.borzg.domain.model.tv.Tv
 import kotlinx.coroutines.flow.Flow
 
 interface DetailCinemaRepository {
 
-    fun getMovie(movieId: Int): Flow<Movie?>
+    fun getMovie(movieId: Int): Flow<Movie>
 
-    suspend fun insertMovie(movie: Movie)
+    fun getTv(tvId: Int): Flow<Tv>
+
+    suspend fun addMovieToWatchList(movie: Movie)
 
     suspend fun updateMovie(movie: Movie)
+
+    suspend fun addTvToWatchList(tv: Tv)
+
+    suspend fun updateTv(tv: Tv)
 
 }

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ToWatchList</string>
+    <string name="search">Поиск</string>
+    <string name="added_to_watchList">Добавлено!</string>
+    <string name="watchlist" translatable="false">Просмотры</string>
+    <string name="something_went_wrong">Упс! Что-то пошло не так</string>
+    <string name="nothing_found">Ничего не найдено</string>
+    <string name="search_string_is_empty">Строка поиска пуста</string>
+    <string name="budget">Бюджет</string>
+    <string name="revenue">Сборы</string>
+    <string name="original_language">Язык оригинала</string>
+    <string name="added_at">Добавлено</string>
+    <string name="viewed">Просмотрено</string>
+    <string name="mark_as_viewed">Пометить как просмотренное</string>
+    <string name="movie_overview">Обзор</string>
+    <string name="check_on_imdb">Перейти на IMDb</string>
+    <string name="vote_count_with_number">Всего голосов: %1$d</string>
+    <string name="nothing_to_show">Нечего показать</string>
+    <string name="views_for_all_time">Просмотрено за все время</string>
+    <string name="views_for_month">За месяц</string>
+    <string name="views_for_week">за неделю</string>
+    <string name="probably_no_internet_connection">Что-то пошло не так\nВозможно, у Вас проблемы с интернет-соединением</string>
+    <string name="overview">Обзор</string>
+    <string name="seasons_count">Всего сезонов:</string>
+    <string name="episode_runtime">Длительность эпизода: %1$s</string>
+    <string name="added_on" translatable="false">Добавлено: </string>
+    <string name="today">сегодня</string>
+    <string name="yesterday">вчера</string>
+    <string name="last_week">на прошлой неделе</string>
+    <string name="last_month">в прошлом месяце</string>
+    <string name="last_year">в прошлом году</string>
+    <string name="this_week">на этой неделе</string>
+    <string name="this_month">в этом месяце</string>
+    <string name="this_year">в этом году</string>
+    <string name="long_ago">давно</string>
+    <string name="your_watchlist_is_empty">Здесь пока ничего нет</string>
+
+    <string-array name="at_month">
+        <item>января</item>
+        <item>февраля</item>
+        <item>марта</item>
+        <item>апреля</item>
+        <item>мая</item>
+        <item>июня</item>
+        <item>июля</item>
+        <item>августа</item>
+        <item>сентября</item>
+        <item>октября</item>
+        <item>ноября</item>
+        <item>декабря</item>
+    </string-array>
+    <string name="no_search_text">Воспользуйтесь поиском, чтобы найти фильмы, сериалы и ТВ-шоу</string>
+    <string name="date_time_error">Ошибка. Возможно, на вашем устройсте неправильно установлены дата и время</string>
+</resources>

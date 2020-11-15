@@ -19,10 +19,11 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginTop="8dp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/poster_card"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Harry Potter and Chamber of Secrets" />
+            tools:text="Гарри Поттер и Тайная Комната" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/poster_card"
@@ -38,8 +39,22 @@
                 android:id="@+id/poster"
                 android:layout_width="100dp"
                 android:layout_height="150dp"
+                android:scaleType="centerCrop"
                 tools:srcCompat="@tools:sample/avatars" />
         </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/original_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/poster_card"
+            app:layout_constraintTop_toBottomOf="@+id/movie_title"
+            tools:text="Harry Potter and Chamber of Secrets" />
 
         <TextView
             android:id="@+id/release_date"
@@ -47,118 +62,38 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginTop="8dp"
-            android:text="TextView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/poster_card"
-            app:layout_constraintTop_toBottomOf="@+id/movie_title" />
+            app:layout_constraintTop_toBottomOf="@+id/original_title"
+            tools:text="2002" />
 
-        <GridLayout
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
+        <TextView
+            android:id="@+id/added_at"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_marginTop="8dp"
-            android:columnCount="2"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/poster_card">
-
-            <LinearLayout
-                android:layout_rowWeight="1"
-                android:layout_columnWeight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:layout_gravity="fill_horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/budget"/>
-
-                <TextView
-                    android:id="@+id/param_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    tools:text="Something" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_rowWeight="1"
-                android:layout_columnWeight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:layout_gravity="fill_horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/revenue"/>
-
-                <TextView
-                    android:id="@+id/param_2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    tools:text="Something" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_rowWeight="1"
-                android:layout_columnWeight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:layout_gravity="fill_horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/original_language"/>
-
-                <TextView
-                    android:id="@+id/param_3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    tools:text="Something" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_rowWeight="1"
-                android:layout_columnWeight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:layout_gravity="fill_horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/added_at"/>
-
-                <TextView
-                    android:id="@+id/param_4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    tools:text="Something" />
-            </LinearLayout>
-
-        </GridLayout>
+            app:layout_constraintTop_toBottomOf="@+id/poster_card"
+            tools:text="Added: today" />
 
         <Button
             android:id="@+id/watch_state_button"
-            android:layout_width="wrap_content"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:text="@string/mark_as_watched"
+            android:layout_marginEnd="16dp"
+            android:text="@string/mark_as_viewed"
             app:icon="@drawable/ic_check_24"
-            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/poster_card"
-            app:layout_constraintTop_toBottomOf="@+id/release_date" />
+            app:layout_constraintTop_toBottomOf="@+id/release_date"
+            tools:text="Пометить как просмотренное" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

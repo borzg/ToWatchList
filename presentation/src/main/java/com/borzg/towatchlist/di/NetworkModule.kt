@@ -41,7 +41,6 @@ object NetworkModule {
             .baseUrl(BuildConfig.TMDB_API_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create(gson))
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
     }
 

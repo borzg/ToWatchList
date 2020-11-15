@@ -4,6 +4,9 @@ import java.lang.StringBuilder
 import java.util.*
 
 fun Int.formatToUsDollars() : String =
+    numberByDigits(this.toLong()) + "\$"
+
+fun Long.formatToUsDollars() : String =
     numberByDigits(this) + "\$"
 
 fun Long.getDate() : String {
@@ -12,7 +15,7 @@ fun Long.getDate() : String {
 }
 
 
-fun numberByDigits(num : Int) : String {
+fun numberByDigits(num : Long) : String {
     val tmp = StringBuilder(num.toString())
     tmp.reverse()
     val builder = StringBuilder()

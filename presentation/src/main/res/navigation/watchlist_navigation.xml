@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/watchlist_navigation"
+    app:startDestination="@id/watchListFragment">
+
+    <fragment
+        android:id="@+id/watchListFragment"
+        android:name="com.borzg.towatchlist.ui.watchlist.WatchListFragment"
+        android:label="fr_watchlist"
+        tools:layout="@layout/fr_watchlist">
+        <action
+            android:id="@+id/action_watchListFragment_to_detailMovieFragment"
+            app:destination="@id/detailMovieFragment"
+            app:enterAnim="@anim/enter_detail_fragment_anim"
+            app:popEnterAnim="@anim/enter_detail_fragment_anim" />
+        <action
+            android:id="@+id/action_watchListFragment_to_detailTvFragment"
+            app:destination="@id/detailTvFragment"
+            app:enterAnim="@anim/enter_detail_fragment_anim"
+            app:popEnterAnim="@anim/enter_detail_fragment_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailMovieFragment"
+        android:name="com.borzg.towatchlist.ui.detail.movie.DetailMovieFragment"
+        android:label="DetailMovieFragment"
+        tools:layout="@layout/fr_detail_movie">
+        <argument
+            android:name="id"
+            app:argType="integer" />
+        <argument
+            android:name="title"
+            app:argType="string" />
+        <argument
+            android:name="original_title"
+            app:argType="string" />
+        <argument
+            android:name="poster_url"
+            android:defaultValue='""'
+            app:argType="string" />
+        <argument
+            android:name="release_date"
+            app:argType="string" />
+        <argument
+            android:name="backdrop_path"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailTvFragment"
+        android:name="com.borzg.towatchlist.ui.detail.tv.DetailTvFragment"
+        android:label="DetailTvFragment"
+        tools:layout="@layout/fr_detail_tv">
+        <argument
+            android:name="id"
+            app:argType="integer" />
+        <argument
+            android:name="name"
+            app:argType="string" />
+        <argument
+            android:name="original_name"
+            app:argType="string" />
+        <argument
+            android:name="poster_url"
+            android:defaultValue='""'
+            app:argType="string" />
+        <argument
+            android:name="first_air_date"
+            app:argType="string" />
+        <argument
+            android:name="last_air_date"
+            app:argType="string" />
+        <argument
+            android:name="backdrop_path"
+            app:argType="string" />
+        <argument
+            android:name="inProduction"
+            app:argType="boolean" />
+    </fragment>
+</navigation>

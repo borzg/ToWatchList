@@ -12,26 +12,15 @@ import retrofit2.http.*
 
 interface TmdbApi {
 
-//    @GET("authentication/token/new")
-//    fun getNewAuthToken() : Single<TokenRequest>
-//
-//    @POST("authentication/session/new")
-//    @FormUrlEncoded
-//    fun getSessionId(@Field("request_token") requestToken : String) : Single<SessionRequest>
-//
-//
-//    @GET("search/multi")
-//    suspend fun getMultiSearchResult(@Query("query") query: String, @Query("page") pageNumber: Int) : TmdbResponse<CinemaSearchResult>
-
     @GET("search/multi")
     suspend fun getMultiSearchResult(@Query("query") query: String, @Query("page") pageNumber: Int = 1) : TmdbResponse<SearchResult>
 
     @GET("movie/{movieId}")
     suspend fun getMovie(@Path("movieId") movieId : Int) : Movie
 
-    @GET("person/{person_id}")
-    fun getPerson(@Path("person_id") personId : Int) : Single<Person>
-
     @GET("tv/{tv_id}")
-    fun getTv(@Path("tv_id") tvId : Int) : Single<Tv>
+    suspend fun getTv(@Path("tv_id") tvId : Int) : Tv
+
+    @GET("movie/{movie_id}/similar")
+    suspend fun getSimilarMovies(@Path("movie_id") movieId: Int, @Query("page") pageNumber: Int = 1) : TmdbResponse<SearchResult.MovieSearchResult>
 }
