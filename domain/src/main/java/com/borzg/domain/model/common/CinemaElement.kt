@@ -1,18 +1,9 @@
 package com.borzg.domain.model.common
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.Ignore
-import androidx.room.PrimaryKey
-import com.borzg.domain.model.Country
-import com.borzg.domain.model.tv.Episode
-import com.borzg.domain.model.tv.Season
-import com.google.gson.annotations.SerializedName
-
 /**
  * Parent class for Movie and Tv
  */
-abstract class CinemaElement() {
+abstract class CinemaElement {
 
     abstract val id: Int
 

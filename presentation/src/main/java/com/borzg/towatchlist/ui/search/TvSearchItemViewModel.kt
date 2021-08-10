@@ -1,11 +1,9 @@
 package com.borzg.towatchlist.ui.search
 
-import com.borzg.domain.model.search.SearchResult
+import com.borzg.domain.model.search.TvSearchResult
 import com.borzg.towatchlist.utils.getYearFromDate
-import com.borzg.towatchlist.utils.getYearFromStringDate
 
-
-class TvSearchItemViewModel(private val tv: SearchResult.TvSearchResult) {
+class TvSearchItemViewModel(private val tv: TvSearchResult) {
 
     val name: String
         get() = tv.name

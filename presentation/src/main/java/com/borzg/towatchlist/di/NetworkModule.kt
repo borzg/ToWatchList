@@ -3,6 +3,7 @@ package com.borzg.towatchlist.di
 import com.borzg.data.api.ApiKeyInterceptor
 import com.borzg.data.api.MultiTypeRequestDeserializer
 import com.borzg.data.api.TmdbApi
+import com.borzg.data.api.model.search.SearchResultNetwork
 import com.borzg.domain.model.search.SearchResult
 import com.borzg.towatchlist.BuildConfig
 import com.google.gson.Gson
@@ -10,28 +11,39 @@ import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 object NetworkModule {
+
+    @Provides
+    @Singleton
+    fun provideInterceptor(): HttpLoggingInterceptor {
+        val httpLoggingInterceptor = HttpLoggingInterceptor()
+        httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+        return httpLoggingInterceptor
+    }
 
     @Provides @Singleton
     fun provideGson() : Gson {
         return GsonBuilder()
-            .registerTypeAdapter(SearchResult::class.java, MultiTypeRequestDeserializer())
+            .registerTypeAdapter(SearchResultNetwork::class.java, MultiTypeRequestDeserializer())
             .create()
     }
 
     @Provides @Singleton
-    fun provideClient() : OkHttpClient {
+    fun provideClient(
+        httpLoggingInterceptor: HttpLoggingInterceptor
+    ) : OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(ApiKeyInterceptor())
+            .addInterceptor(httpLoggingInterceptor)
             .build()
     }
 

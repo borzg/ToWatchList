@@ -1,7 +1,7 @@
 package com.borzg.domain.service.implementations
 
-import com.borzg.domain.model.DB
-import com.borzg.domain.model.Server
+import com.borzg.domain.DB
+import com.borzg.domain.Server
 import com.borzg.domain.model.tv.Tv
 import com.borzg.domain.repository.DetailCinemaRepository
 import com.borzg.domain.service.DetailTvService
@@ -10,13 +10,10 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
-class DetailTvServiceImpl @Inject constructor(): DetailTvService {
-
-    @Inject @DB
-    lateinit var dbRepository: DetailCinemaRepository
-
-    @Inject @Server
-    lateinit var serverRepository: DetailCinemaRepository
+class DetailTvServiceImpl @Inject constructor(
+    @param:DB private val dbRepository: DetailCinemaRepository,
+    @param:Server private val serverRepository: DetailCinemaRepository
+): DetailTvService {
 
     var tvStateKeeper: Tv? = null
         @Synchronized get

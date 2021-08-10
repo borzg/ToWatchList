@@ -1,24 +1,23 @@
 package com.borzg.data.repository
 
-import android.util.Log
 import com.borzg.data.api.TmdbApi
 import com.borzg.domain.model.Movie
 import com.borzg.domain.model.tv.Tv
 import com.borzg.domain.repository.DetailCinemaRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.single
 import javax.inject.Inject
 
-class DetailServerRepository @Inject constructor(val tmdbApi: TmdbApi) :
-    DetailCinemaRepository {
+class DetailServerRepository @Inject constructor(
+    private val tmdbApi: TmdbApi
+) : DetailCinemaRepository {
 
     override fun getMovie(movieId: Int): Flow<Movie> = flow {
-        emit(tmdbApi.getMovie(movieId))
+        emit(tmdbApi.getMovie(movieId).toDomain())
     }
 
     override fun getTv(tvId: Int): Flow<Tv> = flow {
-        emit(tmdbApi.getTv(tvId))
+        emit(tmdbApi.getTv(tvId).toDomain())
     }
 
     override suspend fun addMovieToWatchList(movie: Movie) {

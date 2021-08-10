@@ -101,9 +101,11 @@ abstract class DetailCinemaElementFragment : Fragment() {
     fun View.animatePosterAppearance() {
         val yAnimationValue = 150f
         showView()
-        y += yAnimationValue
+        translationY += yAnimationValue
+        scaleX = 0.6f
+        scaleY = 0.6f
         alpha = 0.4f
-        val animation = animate().translationYBy(-yAnimationValue).alpha(1f)
+        val animation = animate().translationYBy(-yAnimationValue).scaleX(1f).scaleY(1f).alpha(1f)
         animation.duration = 600
         animation.interpolator = DecelerateInterpolator()
         animation.start()

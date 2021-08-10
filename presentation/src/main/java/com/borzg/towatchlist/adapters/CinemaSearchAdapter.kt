@@ -4,24 +4,22 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.RecyclerView
-import com.borzg.domain.model.common.CinemaElement
+import com.borzg.domain.model.search.MovieSearchResult
 import com.borzg.domain.model.search.SearchResult
-import com.borzg.domain.model.search.SearchResult.MovieSearchResult
-import com.borzg.domain.model.search.SearchResult.TvSearchResult
+import com.borzg.domain.model.search.TvSearchResult
 import com.borzg.towatchlist.databinding.LiMovieSearchBinding
 import com.borzg.towatchlist.databinding.LiTvSearchBinding
 import com.borzg.towatchlist.ui.search.viewholders.MovieSearchItemViewHolder
 import com.borzg.towatchlist.ui.search.viewholders.SearchViewHolder
 import com.borzg.towatchlist.ui.search.viewholders.TvSearchItemViewHolder
-import com.borzg.towatchlist.ui.watchlist.viewholders.WatchListViewHolder
-
-const val MOVIE_TYPE = 1
-const val TV_TYPE = 2
 
 class CinemaSearchAdapter(private val onItemClickListener: (SearchResult) -> Unit) :
     PagingDataAdapter<SearchResult, SearchViewHolder>(SearchItemDiffCallback) {
+
+    private companion object {
+        const val MOVIE_TYPE = 1
+        const val TV_TYPE = 2
+    }
 
     override fun getItemViewType(position: Int): Int =
         when (getItem(position)) {
@@ -58,12 +56,12 @@ class CinemaSearchAdapter(private val onItemClickListener: (SearchResult) -> Uni
     object SearchItemDiffCallback : DiffUtil.ItemCallback<SearchResult>() {
 
         override fun areItemsTheSame(oldItem: SearchResult, newItem: SearchResult): Boolean {
-            if (oldItem.media_type != newItem.media_type) return false
+            if (oldItem.mediaType != newItem.mediaType) return false
             return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(oldItem: SearchResult, newItem: SearchResult): Boolean {
-            if (oldItem.media_type != newItem.media_type) return false
+            if (oldItem.mediaType != newItem.mediaType) return false
             return oldItem == newItem
         }
 

@@ -1,16 +1,17 @@
 package com.borzg.towatchlist.ui.detail.tv
 
-import androidx.hilt.Assisted
-import androidx.hilt.lifecycle.ViewModelInject
+import dagger.assisted.Assisted
 import androidx.lifecycle.*
 import com.borzg.domain.service.DetailTvService
 import com.borzg.domain.model.tv.Tv
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class DetailTvViewModel @ViewModelInject constructor(
-    val service: DetailTvService,
-    @Assisted private val savedStateHandle: SavedStateHandle
+@HiltViewModel
+class DetailTvViewModel @Inject constructor(
+    private val service: DetailTvService
 ) : ViewModel() {
 
     fun getTvDetails(tvId: Int): LiveData<Tv> =

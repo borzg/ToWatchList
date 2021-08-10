@@ -1,28 +1,24 @@
 package com.borzg.domain.model
 
-import androidx.room.*
 import com.borzg.domain.model.common.CinemaElement
-import com.google.gson.annotations.SerializedName
 
-@Entity(tableName = "movie")
 data class Movie(
-        @PrimaryKey @SerializedName("id") override val id: Int,
-        @SerializedName("backdrop_path") val backdrop_path: String?,
-        @SerializedName("budget") val budget: Long,
-        @SerializedName("imdb_id") val imdbId: String?,
-        @SerializedName("original_language") val originalLanguage: String,
-        @SerializedName("original_title") val original_title: String,
-        @SerializedName("overview") val overview: String?,
-        @SerializedName("popularity") val popularity: Float,
-        @SerializedName("poster_path") val posterPath: String?,
-        @SerializedName("release_date") val releaseDate: String,
-        @SerializedName("revenue") val revenue: Long,
-        @SerializedName("runtime") val runtime: Int?,
-        @SerializedName("title") val title: String,
-        @SerializedName("vote_average") val vote_average: Float,
-        @SerializedName("vote_count") val vote_count: Int
-) : CinemaElement() {
-        @Ignore @SerializedName("production_countries") var productionCountries: List<Country>? = null
-        @ColumnInfo(typeAffinity = ColumnInfo.BLOB) var poster: ByteArray? = null
-        @ColumnInfo(typeAffinity = ColumnInfo.BLOB) var backdrop: ByteArray? = null
-}
+    override val id: Int,
+    val backdrop_path: String?,
+    val budget: Long,
+    val imdbId: String?,
+    val originalLanguage: String,
+    val original_title: String,
+    val overview: String?,
+    val popularity: Float,
+    val posterPath: String?,
+    val releaseDate: String,
+    val revenue: Long,
+    val runtime: Int?,
+    val title: String,
+    val vote_average: Float,
+    val vote_count: Int,
+    val productionCountries: List<Country> = emptyList(),
+    val poster: ByteArray? = null,
+    val backdrop: ByteArray? = null
+) : CinemaElement()

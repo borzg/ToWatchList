@@ -1,16 +1,15 @@
 package com.borzg.domain.service.implementations
 
-import com.borzg.domain.model.DB
+import com.borzg.domain.DB
 import com.borzg.domain.model.common.CinemaElement
 import com.borzg.domain.repository.WatchListRepository
 import com.borzg.domain.service.WatchListService
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class WatchListServiceImpl @Inject constructor() : WatchListService {
-
-    @Inject @DB
-    lateinit var watchListDbRepository: WatchListRepository
+class WatchListServiceImpl @Inject constructor(
+    @param:DB private val watchListDbRepository: WatchListRepository
+) : WatchListService {
 
     override suspend fun setWatchedState(isWatched: Boolean, cinemaElement: CinemaElement) {
         watchListDbRepository.setWatchedState(isWatched, cinemaElement)

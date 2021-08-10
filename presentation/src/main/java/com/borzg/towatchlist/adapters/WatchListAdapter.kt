@@ -1,6 +1,6 @@
 package com.borzg.towatchlist.adapters
 
-import android.util.Log
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -20,6 +20,11 @@ class WatchListAdapter(
     private val onListItemClickListener: (CinemaElement) -> Unit,
     private val onAddButtonClickListener: suspend (CinemaElement, Boolean) -> Unit
 ) : ListAdapter<CinemaElement, WatchListViewHolder>(WatchListItemDiffCallback) {
+
+    private companion object {
+        const val MOVIE_TYPE = 1
+        const val TV_TYPE = 2
+    }
 
     override fun getItemViewType(position: Int): Int =
         when (getItem(position)) {
@@ -59,6 +64,7 @@ class WatchListAdapter(
             return oldItem.id == newItem.id && ((oldItem is Movie && newItem is Movie) || (oldItem is Tv && newItem is Tv))
         }
 
+        @SuppressLint("DiffUtilEquals")
         override fun areContentsTheSame(oldItem: CinemaElement, newItem: CinemaElement): Boolean {
             return oldItem == newItem
         }

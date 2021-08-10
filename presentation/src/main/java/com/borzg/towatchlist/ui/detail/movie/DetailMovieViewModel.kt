@@ -1,22 +1,22 @@
 package com.borzg.towatchlist.ui.detail.movie
 
-import androidx.hilt.Assisted
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.borzg.domain.service.DetailMovieService
 import com.borzg.domain.model.Movie
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class DetailMovieViewModel @ViewModelInject constructor(
+@HiltViewModel
+class DetailMovieViewModel @Inject constructor(
     private val detailMovieService: DetailMovieService,
-    @Assisted private val savedStateHandle: SavedStateHandle
-) :
-    ViewModel() {
+) : ViewModel() {
 
-    fun getMovieDetails(movieId: Int): LiveData<Movie> =
-        detailMovieService.getMovieDetails(movieId).flowOn(Dispatchers.IO).asLiveData()
+    fun getMovieDetails(movieId: Int): Flow<Movie> =
+        detailMovieService.getMovieDetails(movieId).flowOn(Dispatchers.IO)
 
     fun addMovieToWatchList(movie: Movie) {
         viewModelScope.launch(Dispatchers.IO) {

@@ -9,33 +9,29 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.MainThread
 import androidx.appcompat.widget.SearchView
-import androidx.core.view.isVisible
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.navGraphViewModels
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.borzg.domain.model.search.MovieSearchResult
 import com.borzg.domain.model.search.SearchResult
+import com.borzg.domain.model.search.TvSearchResult
 import com.borzg.towatchlist.R
 import com.borzg.towatchlist.adapters.CinemaSearchAdapter
 import com.borzg.towatchlist.databinding.FrSearchBinding
 import com.borzg.towatchlist.utils.hideView
 import com.borzg.towatchlist.utils.showView
-import com.borzg.towatchlist.utils.simpleStartAlphaAnimation
 import com.borzg.towatchlist.utils.startAlphaAnimationIfHidden
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import java.lang.IndexOutOfBoundsException
 import java.net.UnknownHostException
 import javax.net.ssl.SSLHandshakeException
-import kotlin.reflect.KProperty
 
 @AndroidEntryPoint
 class SearchFragment : Fragment() {
@@ -53,7 +49,7 @@ class SearchFragment : Fragment() {
 
     private val adapter: CinemaSearchAdapter = CinemaSearchAdapter { searchResult ->
         val action: NavDirections = when (searchResult) {
-            is SearchResult.MovieSearchResult -> SearchFragmentDirections.actionSearchFragmentToDetailMovieFragment(
+            is MovieSearchResult -> SearchFragmentDirections.actionSearchFragmentToDetailMovieFragment(
                 searchResult.id,
                 searchResult.title,
                 searchResult.original_title,
@@ -61,7 +57,7 @@ class SearchFragment : Fragment() {
                 searchResult.release_date ?: "",
                 searchResult.backdrop_path ?: ""
             )
-            is SearchResult.TvSearchResult -> SearchFragmentDirections.actionSearchFragmentToDetailTvFragment(
+            is TvSearchResult -> SearchFragmentDirections.actionSearchFragmentToDetailTvFragment(
                 searchResult.id,
                 searchResult.name,
                 searchResult.originalName,
@@ -71,7 +67,6 @@ class SearchFragment : Fragment() {
                 searchResult.backdrop_path ?: "",
                 false
             )
-            SearchResult.DummySearchResult -> throw IllegalStateException("Invalid DummySearchResult type in search results list")
         }
         findNavController().navigate(action)
     }
@@ -202,7 +197,7 @@ class SearchFragment : Fragment() {
                         adapter.submitData(pagingData)
                     }
                 } catch (e: Throwable) {
-                    Log.e("TAG", "search: ${e.stackTrace}", e)
+                    e.printStackTrace()
                 }
             }
         } else {

@@ -1,29 +1,32 @@
 package com.borzg.towatchlist.ui.watchlist
 
-import androidx.hilt.Assisted
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.borzg.domain.service.WatchListService
 import com.borzg.domain.model.common.CinemaElement
+import dagger.assisted.Assisted
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import java.util.*
+import javax.inject.Inject
 
-class WatchlistViewModel @ViewModelInject constructor(
+@HiltViewModel
+class WatchlistViewModel @Inject constructor(
     private val watchListService: WatchListService,
-    @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
+    private companion object {
+        const val MINUTE = 60 * 1000L
+        const val HOUR = MINUTE * 60
+        const val ONE_DAY = HOUR * 24
+        const val ONE_WEEK = ONE_DAY * 7
+        const val ONE_MONTH = ONE_WEEK * 4
+    }
 
     suspend fun setWatchedState(isWatched: Boolean, cinemaElement: CinemaElement) {
         withContext(Dispatchers.IO) {
             watchListService.setWatchedState(isWatched, cinemaElement)
         }
     }
-
-    val MINUTE = 60 * 1000L
-    val HOUR = MINUTE * 60
-    val ONE_DAY = HOUR * 24
-    val ONE_WEEK = ONE_DAY * 7
-    val ONE_MONTH = ONE_WEEK * 4
 
     fun numberOfViewsForWeek(): LiveData<Int> {
         val time = Date().time - ONE_WEEK
