@@ -1,8 +1,6 @@
 package com.borzg.towatchlist.ui.watchlist
 
-import com.borzg.domain.model.tv.Tv
-import com.borzg.towatchlist.utils.formatToUsDollars
-import com.borzg.towatchlist.utils.getDate
+import com.borzg.domain.model.Tv
 import com.borzg.towatchlist.utils.getYearFromDate
 
 class TvWatchListItemViewModel(private val tv: Tv) {
@@ -32,7 +30,7 @@ class TvWatchListItemViewModel(private val tv: Tv) {
         get() = tv.isWatched
 
     val runtime: String
-        get() = tv.episode_run_time.toString()
+        get() = tv.episodeRunTime.toString()
 
     val posterPath: String
         get() = tv.posterPath ?: ""

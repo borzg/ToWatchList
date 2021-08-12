@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.borzg.domain.model.Movie
-import com.borzg.domain.model.common.CinemaElement
-import com.borzg.domain.model.tv.Tv
+import com.borzg.domain.model.CinemaElement
+import com.borzg.domain.model.Tv
 import com.borzg.towatchlist.databinding.LiMovieWatchlistBinding
 import com.borzg.towatchlist.databinding.LiTvWatchlistBinding
 import com.borzg.towatchlist.ui.watchlist.viewholders.MovieWatchListViewHolder

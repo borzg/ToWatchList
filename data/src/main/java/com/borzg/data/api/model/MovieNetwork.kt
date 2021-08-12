@@ -2,7 +2,6 @@ package com.borzg.data.api.model
 
 import androidx.room.Entity
 import com.borzg.data.commons.DomainMapper
-import com.borzg.domain.model.Country
 import com.borzg.domain.model.Movie
 import com.google.gson.annotations.SerializedName
 
@@ -30,20 +29,23 @@ data class MovieNetwork(
     override fun toDomain(): Movie =
         Movie(
             id = id,
-            backdrop_path = backdrop_path,
+            backdropPath = backdrop_path,
             budget = budget,
             imdbId = imdbId,
             originalLanguage = originalLanguage,
-            original_title = original_title,
-            overview = overview,
+            originalTitle = original_title.sanitize(),
+            overview = overview?.sanitize(),
             popularity = popularity,
             posterPath = posterPath,
             releaseDate = releaseDate,
             revenue = revenue,
             runtime = runtime,
-            title = title,
-            vote_average = vote_average,
-            vote_count = vote_count,
+            title = title.sanitize(),
+            voteAverage = vote_average,
+            voteCount = vote_count,
             productionCountries = productionCountries?.map { it.toDomain() } ?: emptyList()
         )
+
+    private fun String.sanitize(): String =
+        replace("--", '\u2014'.toString())
 }

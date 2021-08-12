@@ -3,7 +3,7 @@ package com.borzg.data.database.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.borzg.data.commons.DomainMapper
-import com.borzg.domain.model.tv.Tv
+import com.borzg.domain.model.Tv
 
 @Entity(tableName = "tv")
 data class TvEntity(
@@ -45,8 +45,8 @@ data class TvEntity(
         popularity = popularity,
         posterPath = posterPath,
         type = type,
-        vote_average = vote_average,
-        vote_count = vote_count
+        voteAverage = vote_average,
+        voteCount = vote_count
     )
 }
 
@@ -65,6 +65,6 @@ fun Tv.toEntity() = TvEntity(
     popularity = popularity,
     posterPath = posterPath,
     type = type,
-    vote_average = vote_average,
-    vote_count = vote_count
+    vote_average = voteAverage,
+    vote_count = voteCount
 )

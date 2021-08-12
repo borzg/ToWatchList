@@ -2,7 +2,7 @@ package com.borzg.domain.service.implementations
 
 import com.borzg.domain.DB
 import com.borzg.domain.Server
-import com.borzg.domain.model.tv.Tv
+import com.borzg.domain.model.Tv
 import com.borzg.domain.repository.DetailCinemaRepository
 import com.borzg.domain.service.DetailTvService
 import kotlinx.coroutines.Dispatchers
@@ -23,7 +23,9 @@ class DetailTvServiceImpl @Inject constructor(
     override fun getTvDetails(tvId: Int): Flow<Tv> = flowOf(
         dbRepository.getTv(tvId),
         serverRepository.getTv(tvId)
-            .catch { println("getMovieDetails from server: $it ${it.message}") }
+            .catch {
+                it.printStackTrace()
+            }
     ).flattenMerge().onEach { tv ->
         // On first iteration or if element comes from DB
         if (tvStateKeeper == null || tv.addTime != null) {

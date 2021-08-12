@@ -1,9 +1,9 @@
-package com.borzg.domain.model.common
+package com.borzg.domain.model
 
 /**
  * Parent class for Movie and Tv
  */
-abstract class CinemaElement {
+sealed class CinemaElement {
 
     abstract val id: Int
 
@@ -13,7 +13,7 @@ abstract class CinemaElement {
     var addTime: Long? = null
 
     /**
-     * Determines whether element will be displayed in the WatchList
+     * Determines whether element will be displayed in the WatchList, null if not added
      */
     var isDisplayedInWatchList: Boolean? = null
 

@@ -1,7 +1,7 @@
 package com.borzg.data.api.model
 
 import com.borzg.data.commons.DomainMapper
-import com.borzg.domain.model.Country
+import com.borzg.domain.model.common.Country
 import com.google.gson.annotations.SerializedName
 
 data class CountryNetwork(

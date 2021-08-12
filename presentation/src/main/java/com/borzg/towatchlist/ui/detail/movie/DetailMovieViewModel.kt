@@ -12,11 +12,20 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailMovieViewModel @Inject constructor(
-    private val detailMovieService: DetailMovieService,
+    private val detailMovieService: DetailMovieService
 ) : ViewModel() {
 
-    fun getMovieDetails(movieId: Int): Flow<Movie> =
-        detailMovieService.getMovieDetails(movieId).flowOn(Dispatchers.IO)
+    private var isMovieInitialized = false
+
+    lateinit var movie: Flow<Movie>
+
+    // Doing so because of hilt assisted injection implementation problems
+    fun setupMovie(movieId: Int) {
+        if (!isMovieInitialized) {
+            isMovieInitialized = true
+            movie = detailMovieService.getMovieDetails(movieId).flowOn(Dispatchers.IO)
+        }
+    }
 
     fun addMovieToWatchList(movie: Movie) {
         viewModelScope.launch(Dispatchers.IO) {

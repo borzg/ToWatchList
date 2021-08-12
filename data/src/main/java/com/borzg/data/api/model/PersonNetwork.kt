@@ -1,7 +1,7 @@
 package com.borzg.data.api.model
 
 import com.borzg.data.commons.DomainMapper
-import com.borzg.domain.model.Person
+import com.borzg.domain.model.common.Person
 import com.google.gson.annotations.SerializedName
 
 data class PersonNetwork(

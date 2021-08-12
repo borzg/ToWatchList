@@ -1,6 +1,6 @@
 package com.borzg.domain.service
 
-import com.borzg.domain.model.tv.Tv
+import com.borzg.domain.model.Tv
 import kotlinx.coroutines.flow.Flow
 
 interface DetailTvService {

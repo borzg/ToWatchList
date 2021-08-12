@@ -1,6 +1,6 @@
 package com.borzg.domain.service
 
-import com.borzg.domain.model.common.CinemaElement
+import com.borzg.domain.model.CinemaElement
 import kotlinx.coroutines.flow.Flow
 
 interface WatchListService {

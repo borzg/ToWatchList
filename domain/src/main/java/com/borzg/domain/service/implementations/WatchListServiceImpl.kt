@@ -1,7 +1,7 @@
 package com.borzg.domain.service.implementations
 
 import com.borzg.domain.DB
-import com.borzg.domain.model.common.CinemaElement
+import com.borzg.domain.model.CinemaElement
 import com.borzg.domain.repository.WatchListRepository
 import com.borzg.domain.service.WatchListService
 import kotlinx.coroutines.flow.Flow

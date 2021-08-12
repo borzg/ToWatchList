@@ -1,6 +1,7 @@
-package com.borzg.domain.model.tv
+package com.borzg.domain.model
 
-import com.borzg.domain.model.common.CinemaElement
+import com.borzg.domain.model.tv.Episode
+import com.borzg.domain.model.tv.Season
 
 data class Tv (
 	override val id : Int,
@@ -17,9 +18,9 @@ data class Tv (
 	val popularity : Float,
 	val posterPath : String?,
 	val type : String,
-	val vote_average : Float,
-	val vote_count : Int,
-	var episode_run_time : List<Int> = emptyList(),
+	val voteAverage : Float,
+	val voteCount : Int,
+	var episodeRunTime : List<Int> = emptyList(),
 	val languages : List<String> = emptyList(),
 	val lastEpisodeToAir : Episode? = null,
 	val originCountry : List<String> = emptyList(),

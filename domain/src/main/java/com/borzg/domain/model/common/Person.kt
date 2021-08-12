@@ -1,4 +1,4 @@
-package com.borzg.domain.model
+package com.borzg.domain.model.common
 
 data class Person (
 	val id : Int,

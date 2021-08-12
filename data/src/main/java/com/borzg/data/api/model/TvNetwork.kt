@@ -1,7 +1,7 @@
 package com.borzg.data.api.model
 
 import com.borzg.data.commons.DomainMapper
-import com.borzg.domain.model.tv.Tv
+import com.borzg.domain.model.Tv
 import com.google.gson.annotations.SerializedName
 
 data class TvNetwork(
@@ -48,9 +48,9 @@ data class TvNetwork(
         popularity = popularity,
         posterPath = posterPath,
         type = type,
-        vote_average = vote_average,
-        vote_count = vote_count,
-        episode_run_time = episode_run_time ?: emptyList(),
+        voteAverage = vote_average,
+        voteCount = vote_count,
+        episodeRunTime = episode_run_time ?: emptyList(),
         languages = languages ?: emptyList(),
         lastEpisodeToAir = lastEpisodeToAir?.toDomain(),
         originCountry = originCountry ?: emptyList(),

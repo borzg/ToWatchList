@@ -1,10 +1,7 @@
 package com.borzg.towatchlist.ui.watchlist.viewholders
 
-import android.annotation.SuppressLint
-import android.util.Log
-import android.view.View
 import com.borzg.domain.model.Movie
-import com.borzg.domain.model.common.CinemaElement
+import com.borzg.domain.model.CinemaElement
 import com.borzg.towatchlist.R
 import com.borzg.towatchlist.databinding.LiMovieWatchlistBinding
 import com.borzg.towatchlist.ui.watchlist.MovieWatchListItemViewModel

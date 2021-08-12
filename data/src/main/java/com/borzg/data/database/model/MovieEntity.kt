@@ -23,10 +23,10 @@ data class MovieEntity(
     val title: String,
     val vote_average: Float,
     val vote_count: Int,
-    var addTime: Long? = null,
-    var isDisplayedInWatchList: Boolean? = null,
-    var isWatched: Boolean = false,
-    var watchedAt: Long? = null,
+    var addTime: Long?,
+    var isDisplayedInWatchList: Boolean,
+    var isWatched: Boolean,
+    var watchedAt: Long?,
 ) : DomainMapper<Movie> {
     @ColumnInfo(typeAffinity = ColumnInfo.BLOB)
     var poster: ByteArray? = null
@@ -37,11 +37,11 @@ data class MovieEntity(
     override fun toDomain(): Movie =
         Movie(
             id = id,
-            backdrop_path = backdrop_path,
+            backdropPath = backdrop_path,
             budget = budget,
             imdbId = imdbId,
             originalLanguage = originalLanguage,
-            original_title = original_title,
+            originalTitle = original_title,
             overview = overview,
             popularity = popularity,
             posterPath = posterPath,
@@ -49,20 +49,25 @@ data class MovieEntity(
             revenue = revenue,
             runtime = runtime,
             title = title,
-            vote_average = vote_average,
-            vote_count = vote_count,
+            voteAverage = vote_average,
+            voteCount = vote_count,
             poster = poster,
             backdrop = backdrop
-        )
+        ).apply {
+            addTime = this@MovieEntity.addTime
+            isDisplayedInWatchList = this@MovieEntity.isDisplayedInWatchList
+            isWatched = this@MovieEntity.isWatched
+            watchedAt = this@MovieEntity.watchedAt
+        }
 }
 
 fun Movie.toEntity() = MovieEntity(
     id = id,
-    backdrop_path = backdrop_path,
+    backdrop_path = backdropPath,
     budget = budget,
     imdbId = imdbId,
     originalLanguage = originalLanguage,
-    original_title = original_title,
+    original_title = originalTitle,
     overview = overview,
     popularity = popularity,
     posterPath = posterPath,
@@ -70,8 +75,12 @@ fun Movie.toEntity() = MovieEntity(
     revenue = revenue,
     runtime = runtime,
     title = title,
-    vote_average = vote_average,
-    vote_count = vote_count
+    vote_average = voteAverage,
+    vote_count = voteCount,
+    isDisplayedInWatchList = isDisplayedInWatchList ?: false,
+    addTime = addTime,
+    isWatched = isWatched,
+    watchedAt = watchedAt
 ).apply {
     poster = this@toEntity.poster
     backdrop = this@toEntity.backdrop

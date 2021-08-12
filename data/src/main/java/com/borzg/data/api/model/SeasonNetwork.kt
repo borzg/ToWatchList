@@ -6,22 +6,22 @@ import com.google.gson.annotations.SerializedName
 
 data class SeasonNetwork(
     @SerializedName("_id") val _id: String?,
-    @SerializedName("air_date") val air_date: String,
-    @SerializedName("episodes") val episodes: List<EpisodeNetwork>,
+    @SerializedName("air_date") val airDate: String?,
+    @SerializedName("episodes") val episodes: List<EpisodeNetwork>?,
     @SerializedName("name") val name: String,
     @SerializedName("overview") val overview: String,
     @SerializedName("id") val id: Int,
-    @SerializedName("poster_path") val poster_path: String?,
-    @SerializedName("season_number") val season_number: Int
+    @SerializedName("poster_path") val posterPath: String?,
+    @SerializedName("season_number") val seasonNumber: Int
 ) : DomainMapper<Season> {
 
     override fun toDomain(): Season = Season(
         id = id,
-        air_date = air_date,
-        episodes = episodes.map { it.toDomain() },
+        airDate = airDate ?: "",
+        episodes = episodes?.map { it.toDomain() } ?: emptyList(),
         name = name,
         overview = overview,
-        poster_path = poster_path,
-        season_number = season_number
+        posterPath = posterPath,
+        seasonNumber = seasonNumber
     )
 }

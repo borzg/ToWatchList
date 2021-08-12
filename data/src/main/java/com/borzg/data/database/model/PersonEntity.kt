@@ -3,7 +3,7 @@ package com.borzg.data.database.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.borzg.data.commons.DomainMapper
-import com.borzg.domain.model.Person
+import com.borzg.domain.model.common.Person
 
 @Entity(tableName = "person")
 data class PersonEntity(

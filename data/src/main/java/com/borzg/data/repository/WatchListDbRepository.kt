@@ -3,8 +3,8 @@ package com.borzg.data.repository
 import com.borzg.data.database.CinemaDao
 import com.borzg.data.database.model.toEntity
 import com.borzg.domain.model.Movie
-import com.borzg.domain.model.common.CinemaElement
-import com.borzg.domain.model.tv.Tv
+import com.borzg.domain.model.CinemaElement
+import com.borzg.domain.model.Tv
 import com.borzg.domain.repository.WatchListRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*

@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.borzg.domain.model.Movie
-import com.borzg.domain.model.tv.Tv
+import com.borzg.domain.model.Tv
 import com.borzg.towatchlist.adapters.SwipeToDeleteCallback
 import com.borzg.towatchlist.adapters.WatchListAdapter
 import com.borzg.towatchlist.databinding.FrWatchlistBinding
@@ -38,10 +38,10 @@ class WatchListFragment : Fragment() {
                 is Movie -> WatchListFragmentDirections.actionWatchListFragmentToDetailMovieFragment(
                     cinemaElement.id,
                     cinemaElement.title,
-                    cinemaElement.original_title,
+                    cinemaElement.originalTitle,
                     cinemaElement.posterPath ?: "",
                     cinemaElement.releaseDate,
-                    cinemaElement.backdrop_path ?: ""
+                    cinemaElement.backdropPath ?: ""
                 )
                 is Tv -> WatchListFragmentDirections.actionWatchListFragmentToDetailTvFragment(
                     cinemaElement.id,

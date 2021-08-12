@@ -1,13 +1,9 @@
 package com.borzg.towatchlist.ui.watchlist.viewholders
 
-import android.util.Log
-import android.view.View
-import com.borzg.domain.model.Movie
-import com.borzg.domain.model.common.CinemaElement
-import com.borzg.domain.model.tv.Tv
+import com.borzg.domain.model.CinemaElement
+import com.borzg.domain.model.Tv
 import com.borzg.towatchlist.R
 import com.borzg.towatchlist.databinding.LiTvWatchlistBinding
-import com.borzg.towatchlist.ui.watchlist.MovieWatchListItemViewModel
 import com.borzg.towatchlist.ui.watchlist.TvWatchListItemViewModel
 import com.borzg.towatchlist.utils.hideView
 import com.borzg.towatchlist.utils.loadImageFromUrl

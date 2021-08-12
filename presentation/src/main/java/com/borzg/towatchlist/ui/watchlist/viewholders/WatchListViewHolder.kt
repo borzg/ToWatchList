@@ -5,7 +5,7 @@ import android.widget.Button
 import androidx.annotation.StringRes
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import com.borzg.domain.model.common.CinemaElement
+import com.borzg.domain.model.CinemaElement
 import com.borzg.towatchlist.R
 import kotlinx.coroutines.*
 

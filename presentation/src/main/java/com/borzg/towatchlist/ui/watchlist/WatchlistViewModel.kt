@@ -2,8 +2,7 @@ package com.borzg.towatchlist.ui.watchlist
 
 import androidx.lifecycle.*
 import com.borzg.domain.service.WatchListService
-import com.borzg.domain.model.common.CinemaElement
-import dagger.assisted.Assisted
+import com.borzg.domain.model.CinemaElement
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import java.util.*

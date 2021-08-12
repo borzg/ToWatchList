@@ -1,136 +1,194 @@
 package com.borzg.towatchlist.ui.detail.tv
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.view.isVisible
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import coil.compose.rememberImagePainter
+import coil.size.Scale
+import coil.transform.BlurTransformation
 import com.borzg.domain.model.Movie
-import com.borzg.domain.model.tv.Tv
+import com.borzg.domain.model.Tv
 import com.borzg.towatchlist.BuildConfig
 import com.borzg.towatchlist.R
 import com.borzg.towatchlist.databinding.FrDetailTvBinding
 import com.borzg.towatchlist.ui.detail.DetailCinemaElementFragment
 import com.borzg.towatchlist.utils.*
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.Flow
 
 @AndroidEntryPoint
-class DetailTvFragment : DetailCinemaElementFragment() {
+class DetailTvFragment : DetailCinemaElementFragment<Tv>() {
 
-    private lateinit var binding: FrDetailTvBinding
     private val viewModel: DetailTvViewModel by viewModels()
     private val args: DetailTvFragmentArgs by navArgs()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = FrDetailTvBinding.inflate(inflater)
-        with(binding) {
-            poster.loadImageFromUrl(args.posterUrl)
-            posterCard.animatePosterAppearance()
-            loadImageFromUrlWithBlur(args.backdropPath, backgroundImage)
-            name.text = args.name
-            if (args.name != args.originalName) originalName.text = args.originalName
-            else originalName.hideView()
-            if (!args.lastAirDate.isBlank()) airDates.text = formatYearsPeriod(
-                args.firstAirDate.getYearFromDate(),
-                args.lastAirDate,
-                args.inProduction
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.setupTv(args.id)
+    }
+
+    override val cinemaElement: Flow<Tv>
+        get() = viewModel.tv
+
+    @Composable
+    override fun PosterBackground(cinemaElement: Tv, modifier: Modifier) {
+        Image(
+            painter = rememberImagePainter(
+                data = requestFromImageUrl(cinemaElement.backdropPath, BIG_SIZE),
+                builder = {
+                    transformations(BlurTransformation(LocalContext.current))
+                    scale(Scale.FILL)
+                    crossfade(true)
+                }
+            ),
+            contentScale = ContentScale.Crop,
+            contentDescription = "Tv backdrop",
+            modifier = modifier.fillMaxSize()
+        )
+    }
+
+    @Composable
+    override fun PosterContent(cinemaElement: Tv, modifier: Modifier) {
+        ConstraintLayout(
+            modifier = modifier
+        ) {
+            val (poster, title, originalTitle, releaseYear) = createRefs()
+            Image(
+                painter = rememberImagePainter(
+                    data = requestFromImageUrl(cinemaElement.posterPath, MEDIUM_SIZE)
+                ),
+                contentDescription = "Tv poster",
+                modifier = Modifier
+                    .size(
+                        width = 100.dp,
+                        height = 150.dp
+                    )
+                    .constrainAs(poster) {
+                        top.linkTo(parent.top, 4.dp)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        bottom.linkTo(title.top)
+                    }
+                    .clip(RoundedCornerShape(16.dp))
+            )
+
+            val isOriginalTitleVisible = cinemaElement.originalName != cinemaElement.name
+            TextWithShadow(
+                text = cinemaElement.name,
+                maxLines = 1,
+                modifier = Modifier.constrainAs(title) {
+                    top.linkTo(poster.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    bottom.linkTo(
+                        if (isOriginalTitleVisible) originalTitle.top
+                        else releaseYear.top
+                    )
+                }
+            )
+
+            if (isOriginalTitleVisible)
+                TextWithShadow(
+                    text = cinemaElement.originalName,
+                    maxLines = 1,
+                    modifier = Modifier.constrainAs(originalTitle) {
+                        top.linkTo(title.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        bottom.linkTo(releaseYear.top)
+                    }
+                )
+
+            TextWithShadow(
+                text = formatYearsPeriod(
+                    cinemaElement.firstAirDate,
+                    cinemaElement.lastAirDate,
+                    cinemaElement.inProduction
+                ),
+                maxLines = 1,
+                modifier = Modifier.constrainAs(releaseYear) {
+                    top.linkTo(
+                        if (isOriginalTitleVisible) originalTitle.bottom
+                        else title.bottom
+                    )
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    bottom.linkTo(parent.bottom, 14.dp)
+                }
             )
         }
-        return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        showNothing()
-        viewModel.getTvDetails(args.id).observe(viewLifecycleOwner, { tv ->
-            with(binding) {
-                fab.setStateDependingOnCinemaElementState(tv)
-                fab.setOnClickListener {
-                    viewModel.addTvToWatchList(tv)
-                    Toast.makeText(
-                        activity,
-                        getString(R.string.added_to_watchList),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-                airDates.text = formatYearsPeriod(tv.firstAirDate, tv.lastAirDate, tv.inProduction)
-                bindDetailsLayout(tv)
-            }
-        })
-    }
-
-    override fun initializeBinders() {
-        bindOverviewLayout()
-        bindRatingLayout()
-        bindSeasonsLayout()
-    }
-
-    override fun showNothing() {
-        with(binding) {
-            tvDetailsLayout.hideView()
-            nothingToShowLayout.root.showView()
+    @Composable
+    override fun DetailsLayout(cinemaElement: Tv, modifier: Modifier) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = modifier
+        ) {
+            DraggableHandle(modifier = Modifier.padding(top = 8.dp))
+            OverviewTitle(
+                modifier = Modifier.padding(top = 8.dp),
+                cinemaElement = cinemaElement
+            )
+            Description(
+                descriptionText = cinemaElement.overview ?: "",
+                modifier = Modifier.padding(top = 8.dp)
+            )
+            UsersAttitude(
+                cinemaElement = cinemaElement,
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp)
+            )
+//            FinanceDetails(
+//                cinemaElement = cinemaElement,
+//                modifier = Modifier.padding(top = 8.dp, start = 16.dp, end = 16.dp)
+//            )
         }
     }
 
-    override fun showDetailLayout() {
-        with(binding) {
-            nothingToShowLayout.root.hideView()
-            tvDetailsLayout.simpleStartAlphaAnimation()
-        }
-    }
+    @Composable
+    override fun AddToWatchlistButton(
+        cinemaElement: Tv,
+        modifier: Modifier
+    ) {
+        val context = LocalContext.current
+        val addedToWatchListString = stringResource(id = R.string.added_to_watchList)
 
-    private fun bindRatingLayout() {
-        addBinderForLayout(binding.ratingCard) {
-            this as Tv
-            with(binding) {
-                if (vote_average != 0f && vote_count != 0) {
-                    ratingBarWithNumber.ratingBar.rating = vote_average
-                    ratingBarWithNumber.ratingNumberTv.text = vote_average.toString()
-                    ratingBarWithNumber.ratingNumberTv.setTextColorForRating(vote_average)
-                    voteCount.text =
-                        getString(R.string.vote_count_with_number, vote_count)
-                    true
-                } else {
-                    false
-                }
-            }
-        }
-    }
-
-    private fun bindOverviewLayout() {
-        addBinderForLayout(binding.overviewCard) {
-            this as Tv
-            with(binding) {
-                if (overview.isNullOrBlank()) {
-                    return@with false
-                }
-                overviewTv.text = overview
-                return@with true
-            }
-        }
-    }
-
-    private fun bindSeasonsLayout() {
-        addBinderForLayout(binding.seasonsCard) {
-            this as Tv
-            with(binding) {
-                if (numberOfSeasons == null || episode_run_time == null || episode_run_time!!.isEmpty()) return@with false
-                seasonsCountTv.text = numberOfSeasons.toString()
-                episodeRunTimeTv.text = getString(
-                    R.string.episode_runtime,
-                    episode_run_time?.get(0)?.minutesToTimeFormat()
-                )
-                return@with true
-            }
+        FloatingActionButton(
+            modifier = modifier,
+            onClick = {
+                viewModel.addTvToWatchList(cinemaElement)
+                Toast.makeText(
+                    context,
+                    addedToWatchListString,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_baseline_add_24),
+                contentDescription = "Add tv to watchlist"
+            )
         }
     }
 

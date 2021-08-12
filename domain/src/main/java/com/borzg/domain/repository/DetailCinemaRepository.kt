@@ -1,8 +1,7 @@
 package com.borzg.domain.repository
 
 import com.borzg.domain.model.Movie
-import com.borzg.domain.model.search.SearchResult
-import com.borzg.domain.model.tv.Tv
+import com.borzg.domain.model.Tv
 import kotlinx.coroutines.flow.Flow
 
 interface DetailCinemaRepository {

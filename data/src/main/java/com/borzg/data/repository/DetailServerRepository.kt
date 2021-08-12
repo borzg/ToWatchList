@@ -2,7 +2,7 @@ package com.borzg.data.repository
 
 import com.borzg.data.api.TmdbApi
 import com.borzg.domain.model.Movie
-import com.borzg.domain.model.tv.Tv
+import com.borzg.domain.model.Tv
 import com.borzg.domain.repository.DetailCinemaRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
