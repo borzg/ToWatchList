@@ -24,5 +24,9 @@ data class Tv (
 	val languages : List<String> = emptyList(),
 	val lastEpisodeToAir : Episode? = null,
 	val originCountry : List<String> = emptyList(),
-	val seasons : List<Season> = emptyList()
+	val seasons : List<Season> = emptyList(),
+	override val addTime: Long? = null,
+	override val isDisplayedInWatchList: Boolean? = null,
+	override val isWatched: Boolean = false,
+	override val watchedAt: Long? = null
 ) : CinemaElement()

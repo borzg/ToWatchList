@@ -46,7 +46,11 @@ data class TvEntity(
         posterPath = posterPath,
         type = type,
         voteAverage = vote_average,
-        voteCount = vote_count
+        voteCount = vote_count,
+        addTime = addTime,
+        isDisplayedInWatchList = isDisplayedInWatchList,
+        isWatched = isWatched,
+        watchedAt = watchedAt
     )
 }
 
@@ -66,5 +70,9 @@ fun Tv.toEntity() = TvEntity(
     posterPath = posterPath,
     type = type,
     vote_average = voteAverage,
-    vote_count = voteCount
+    vote_count = voteCount,
+    isDisplayedInWatchList = isDisplayedInWatchList,
+    addTime = addTime,
+    isWatched = isWatched,
+    watchedAt = watchedAt
 )

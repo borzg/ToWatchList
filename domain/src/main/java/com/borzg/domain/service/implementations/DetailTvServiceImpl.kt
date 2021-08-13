@@ -32,9 +32,9 @@ class DetailTvServiceImpl @Inject constructor(
             tvStateKeeper = tv
         } else {
             // When item element from server
-            tv.copyCinemaElementParametersFrom(tvStateKeeper!!)
-            tvStateKeeper = tv
-            dbRepository.updateTv(tv)
+            val newTv: Tv = tv.copyCinemaElementParametersFrom(tvStateKeeper!!)
+            tvStateKeeper = newTv
+            dbRepository.updateTv(newTv)
         }
     }.flowOn(Dispatchers.IO)
 

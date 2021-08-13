@@ -52,13 +52,12 @@ data class MovieEntity(
             voteAverage = vote_average,
             voteCount = vote_count,
             poster = poster,
-            backdrop = backdrop
-        ).apply {
-            addTime = this@MovieEntity.addTime
-            isDisplayedInWatchList = this@MovieEntity.isDisplayedInWatchList
-            isWatched = this@MovieEntity.isWatched
-            watchedAt = this@MovieEntity.watchedAt
-        }
+            backdrop = backdrop,
+            addTime = addTime,
+            isDisplayedInWatchList = isDisplayedInWatchList,
+            isWatched = isWatched,
+            watchedAt = watchedAt
+        )
 }
 
 fun Movie.toEntity() = MovieEntity(

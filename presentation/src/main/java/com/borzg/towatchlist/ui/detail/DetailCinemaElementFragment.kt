@@ -9,9 +9,7 @@ import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import android.widget.TextView
 import androidx.annotation.ColorInt
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.calculateTargetValue
+import androidx.compose.animation.core.*
 import androidx.compose.animation.splineBasedDecay
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -27,6 +25,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.SaverScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -104,7 +105,15 @@ abstract class DetailCinemaElementFragment<T : CinemaElement> : Fragment() {
     open fun DetailCinemaElementScreen(cinemaElement: T) {
         val toolbarHeight = 300.dp
         val toolbarHeightPx = with(LocalDensity.current) { toolbarHeight.roundToPx().toFloat() }
-        val offset = remember {
+        val offset = rememberSaveable(saver = object : Saver<Animatable<Float, AnimationVector1D>, Float> {
+            override fun restore(value: Float): Animatable<Float, AnimationVector1D> {
+                return Animatable(initialValue = value)
+            }
+
+            override fun SaverScope.save(value: Animatable<Float, AnimationVector1D>): Float {
+                return value.value
+            }
+        }) {
             Animatable(
                 initialValue = toolbarHeightPx
             )

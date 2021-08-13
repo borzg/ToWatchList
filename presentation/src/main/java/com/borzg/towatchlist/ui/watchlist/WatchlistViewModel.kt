@@ -5,6 +5,10 @@ import com.borzg.domain.service.WatchListService
 import com.borzg.domain.model.CinemaElement
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import java.util.*
 import javax.inject.Inject
 
@@ -21,27 +25,26 @@ class WatchlistViewModel @Inject constructor(
         const val ONE_MONTH = ONE_WEEK * 4
     }
 
-    suspend fun setWatchedState(isWatched: Boolean, cinemaElement: CinemaElement) {
-        withContext(Dispatchers.IO) {
+    fun setWatchedState(isWatched: Boolean, cinemaElement: CinemaElement) {
+        viewModelScope.launch {
             watchListService.setWatchedState(isWatched, cinemaElement)
         }
     }
 
-    fun numberOfViewsForWeek(): LiveData<Int> {
-        val time = Date().time - ONE_WEEK
-        return watchListService.getNumberOfViewsSince(time).asLiveData()
-    }
+    val numberOfViewsForWeek: StateFlow<Int> =
+        watchListService.getNumberOfViewsSince(Date().time - ONE_WEEK)
+            .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
 
-    fun numberOfViewsForMonth(): LiveData<Int> {
-        val time = Date().time - ONE_MONTH
-        return watchListService.getNumberOfViewsSince(time).asLiveData()
-    }
+    val numberOfViewsForMonth: StateFlow<Int> =
+        watchListService.getNumberOfViewsSince(Date().time - ONE_MONTH)
+            .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
 
-    fun numberOfViewsForAllTime(): LiveData<Int> =
-        watchListService.getNumberOfViewsSince(0).asLiveData()
+    val numberOfViewsForAllTime: StateFlow<Int> =
+        watchListService.getNumberOfViewsSince(0)
+            .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
 
-    fun getContentFromWatchList(): LiveData<List<CinemaElement>> =
-        watchListService.getWatchListContent().asLiveData()
+    fun getContentFromWatchList(): Flow<List<CinemaElement>> =
+        watchListService.getWatchListContent()
 
     fun removeFromWatchList(cinemaElement: CinemaElement) {
         viewModelScope.launch(Dispatchers.IO) {

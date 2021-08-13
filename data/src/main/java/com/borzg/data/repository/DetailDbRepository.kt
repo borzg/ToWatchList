@@ -38,15 +38,17 @@ class DetailDbRepository @Inject constructor(
 
     private suspend fun addCinemaElementToWatchList(element: CinemaElement) {
         if (element.isDisplayedInWatchList != null) {
-            if (!element.isDisplayedInWatchList!!) {
-                element.addTime = System.currentTimeMillis()
-                element.isDisplayedInWatchList = true
-            }
-            updateCinemaElement(element)
+            updateCinemaElement(
+                if (!element.isDisplayedInWatchList!!) element.copyTypedLocalCinemaElementParameters(
+                    addTime = System.currentTimeMillis(),
+                    isDisplayedInWatchList = true
+                ) else element
+            )
         } else {
-            element.addTime = System.currentTimeMillis()
-            element.isDisplayedInWatchList = true
-            insertCinemaElement(element)
+            insertCinemaElement(element.copyLocalCinemaElementParameters(
+                addTime = System.currentTimeMillis(),
+                isDisplayedInWatchList = true
+            ))
         }
     }
 

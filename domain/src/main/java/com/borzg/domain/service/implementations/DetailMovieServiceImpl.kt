@@ -34,9 +34,9 @@ class DetailMovieServiceImpl @Inject constructor(
                 movieStateKeeper = movie
             } else {
                 // When element comes from server
-                movie.copyCinemaElementParametersFrom(movieStateKeeper!!)
-                movieStateKeeper = movie
-                detailDBCinemaRepository.updateMovie(movie)
+                val newMovie: Movie = movie.copyCinemaElementParametersFrom(movieStateKeeper!!)
+                movieStateKeeper = newMovie
+                detailDBCinemaRepository.updateMovie(newMovie)
             }
         }
     }

@@ -20,5 +20,9 @@ data class Movie(
     val voteCount: Int,
     val productionCountries: List<Country> = emptyList(),
     val poster: ByteArray? = null,
-    val backdrop: ByteArray? = null
+    val backdrop: ByteArray? = null,
+    override val addTime: Long? = null,
+    override val isDisplayedInWatchList: Boolean? = null,
+    override val isWatched: Boolean = false,
+    override val watchedAt: Long? = null
 ) : CinemaElement()

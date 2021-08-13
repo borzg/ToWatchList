@@ -160,10 +160,6 @@ class DetailTvFragment : DetailCinemaElementFragment<Tv>() {
                 cinemaElement = cinemaElement,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp)
             )
-//            FinanceDetails(
-//                cinemaElement = cinemaElement,
-//                modifier = Modifier.padding(top = 8.dp, start = 16.dp, end = 16.dp)
-//            )
         }
     }
 
