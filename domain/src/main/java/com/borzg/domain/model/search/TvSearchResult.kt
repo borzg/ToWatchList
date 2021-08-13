@@ -8,7 +8,7 @@ data class TvSearchResult(
     val name: String,
     val originalName: String,
     val popularity: Float,
-    val backdrop_path: String?,
+    val backdropPath: String?,
     val voteAverage: Float,
     val voteCount: Int
 ) : SearchResult()

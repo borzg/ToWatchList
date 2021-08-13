@@ -26,7 +26,7 @@ data class TvSearchResultNetwork(
             name = name,
             originalName = originalName,
             popularity = popularity,
-            backdrop_path = backdrop_path,
+            backdropPath = backdrop_path,
             voteAverage = voteAverage,
             voteCount = voteCount
         )

@@ -1,208 +1,377 @@
 package com.borzg.towatchlist.ui.search
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.annotation.MainThread
-import androidx.appcompat.widget.SearchView
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavDirections
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.fragment.findNavController
-import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemsIndexed
+import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
 import com.borzg.domain.model.search.MovieSearchResult
 import com.borzg.domain.model.search.SearchResult
 import com.borzg.domain.model.search.TvSearchResult
 import com.borzg.towatchlist.R
-import com.borzg.towatchlist.adapters.CinemaSearchAdapter
-import com.borzg.towatchlist.databinding.FrSearchBinding
-import com.borzg.towatchlist.utils.hideView
-import com.borzg.towatchlist.utils.showView
-import com.borzg.towatchlist.utils.startAlphaAnimationIfHidden
+import com.borzg.towatchlist.ui.theme.ToWatchListTheme
+import com.borzg.towatchlist.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import java.net.UnknownHostException
-import javax.net.ssl.SSLHandshakeException
 
 @AndroidEntryPoint
 class SearchFragment : Fragment() {
 
-    private var searchJob: Job? = null
-    private lateinit var binding: FrSearchBinding
-    private lateinit var searchListLoadStates: Flow<CombinedLoadStates>
-
-    private val viewModel: SearchViewModel by viewModels()
-    private var currentQuery
-        get() = viewModel.currentQuery
-        set(value) {
-            viewModel.currentQuery = value
-        }
-
-    private val adapter: CinemaSearchAdapter = CinemaSearchAdapter { searchResult ->
-        val action: NavDirections = when (searchResult) {
-            is MovieSearchResult -> SearchFragmentDirections.actionSearchFragmentToDetailMovieFragment(
-                searchResult.id,
-                searchResult.title,
-                searchResult.original_title,
-                searchResult.posterPath ?: "",
-                searchResult.release_date ?: "",
-                searchResult.backdrop_path ?: ""
-            )
-            is TvSearchResult -> SearchFragmentDirections.actionSearchFragmentToDetailTvFragment(
-                searchResult.id,
-                searchResult.name,
-                searchResult.originalName,
-                searchResult.posterPath ?: "",
-                searchResult.firstAirDate ?: "",
-                "",
-                searchResult.backdrop_path ?: "",
-                false
-            )
-        }
-        findNavController().navigate(action)
+    enum class SearchInfoState {
+        NO_QUERY,
+        NOTHING_FOUND
     }
 
+    @FlowPreview
+    @ExperimentalCoroutinesApi
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FrSearchBinding.inflate(LayoutInflater.from(activity))
-        bindSearchList()
-        bindSwipeRefreshLayout()
-        bindSearchView()
-        return binding.root
-    }
+    ): View {
+        return ComposeView(requireContext()).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
 
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        if (currentQuery.isBlank()) showDefaultLayout()
-        else search(currentQuery)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        searchJob?.cancel()
-    }
-
-    private fun bindSwipeRefreshLayout() {
-        binding.swipeRefresher.setOnRefreshListener {
-            search(currentQuery)
-        }
-    }
-
-    private fun bindSearchView() {
-        binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                search(query)
-                return true
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                // TODO Add suggestions
-                return false
-            }
-
-        })
-    }
-
-    private fun bindSearchList() {
-        with(binding.searchList) {
-            layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)
-            adapter = this@SearchFragment.adapter
-            addItemDecoration(DividerItemDecoration(context, RecyclerView.VERTICAL))
-        }
-        searchListLoadStates = adapter.loadStateFlow
-        lifecycleScope.launch(Dispatchers.Main) {
-            // Drop first default emit to set default layout
-            // Debounce is here for handling only last state when loadStates emitting very fast (faster then 10 milliseconds)
-            searchListLoadStates.drop(1).debounce(10).collect {
-                handleLoadStates(it)
-            }
-        }
-    }
-
-    @MainThread
-    private fun handleLoadStates(loadStates: CombinedLoadStates) {
-        val state = loadStates.refresh
-        setRefreshState(state is LoadState.Loading)
-        if (state is LoadState.Loading) return
-        if (state is LoadState.Error) {
-            when (state.error) {
-                is UnknownHostException -> showNoInternetConnectionLayout()
-                is SSLHandshakeException -> showToastMessage(getString(R.string.date_time_error))
-            }
-        } else if (state is LoadState.NotLoading && loadStates.append.endOfPaginationReached && binding.searchList.adapter?.itemCount == 0)
-            showEmptyListLayout()
-        else showSearchList()
-    }
-
-    @MainThread
-    private fun setRefreshState(isRefreshing: Boolean) {
-        binding.swipeRefresher.isRefreshing = isRefreshing
-    }
-
-    @MainThread
-    private fun showToastMessage(message: String?) {
-        Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun showSearchList() {
-        with(binding) {
-            searchList.showView()
-            errorLayout.hideView()
-        }
-    }
-
-    private fun showDefaultLayout() {
-        with(binding) {
-            errorTv.text = getString(R.string.no_search_text)
-            searchList.hideView()
-            errorLayout.startAlphaAnimationIfHidden(300)
-        }
-    }
-
-    private fun showEmptyListLayout() {
-        with(binding) {
-            errorTv.text = getString(R.string.nothing_found)
-            searchList.hideView()
-            errorLayout.startAlphaAnimationIfHidden(300)
-        }
-    }
-
-    private fun showNoInternetConnectionLayout() {
-        with(binding) {
-            errorTv.text = getString(R.string.probably_no_internet_connection)
-            searchList.hideView()
-            errorLayout.startAlphaAnimationIfHidden(300)
-        }
-    }
-
-    fun search(query: String?) {
-        if (!query.isNullOrBlank()) {
-            currentQuery = query
-            searchJob?.cancel()
-            searchJob = lifecycleScope.launch(Dispatchers.IO) {
-                try {
-                    viewModel.searchData(query).collectLatest { pagingData ->
-                        adapter.submitData(pagingData)
-                    }
-                } catch (e: Throwable) {
-                    e.printStackTrace()
+            setContent {
+                ToWatchListTheme {
+                    SearchScreen()
                 }
             }
-        } else {
-            setRefreshState(false)
-            showToastMessage(getString(R.string.search_string_is_empty))
         }
     }
+
+    @FlowPreview
+    @ExperimentalCoroutinesApi
+    @Composable
+    fun SearchScreen(
+        viewModel: SearchViewModel = viewModel()
+    ) {
+        val query by viewModel.searchQuery.collectAsState()
+        val searchResults = viewModel.searchResults.collectAsLazyPagingItems()
+        Column {
+            SearchToolbar(
+                query = query,
+                onNewQuery = { newQuery ->
+                    viewModel.setNewQuery(newQuery)
+                }
+            )
+
+            val searchInfoState: SearchInfoState? = when {
+                query.isBlank() -> SearchInfoState.NO_QUERY
+                searchResults.loadState.refresh is LoadState.NotLoading
+                        && searchResults.loadState.append.endOfPaginationReached
+                        && searchResults.itemCount == 0 -> SearchInfoState.NOTHING_FOUND
+                else -> null
+            }
+
+            searchInfoState?.let {
+                SearchInfoLayout(it)
+            } ?: run {
+                SearchList(
+                    searchResults = searchResults
+                )
+            }
+        }
+    }
+
+    @Composable
+    fun SearchToolbar(
+        query: String,
+        onNewQuery: (newQuery: String) -> Unit
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(4.dp),
+            contentAlignment = Alignment.CenterEnd
+        ) {
+            TextField(
+                value = query,
+                onValueChange = onNewQuery,
+                placeholder = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_search_24),
+                        contentDescription = "Search movies and tv series icon"
+                    )
+                }
+            )
+        }
+    }
+
+    @Composable
+    fun DataLoadingProgress(modifier: Modifier = Modifier) {
+        Box(
+            modifier = modifier.padding(8.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            val backgroundColor = MaterialTheme.colors.background
+            val circleRadius = 20.dp
+            val circleRadiusPx = with(LocalDensity.current) { circleRadius.toPx() }
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .shadow(
+                        elevation = 4.dp,
+                        shape = CircleShape
+                    )
+                    .size(circleRadius * 2)
+                    .drawBehind {
+                        drawCircle(
+                            color = backgroundColor,
+                            radius = circleRadiusPx,
+                        )
+                    }
+                    .padding(circleRadius / 3f)
+            )
+        }
+    }
+
+    @Composable
+    fun SearchInfoLayout(
+        searchInfoState: SearchInfoState
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = when(searchInfoState) {
+                    SearchInfoState.NO_QUERY -> stringResource(id = R.string.no_search_text)
+                    SearchInfoState.NOTHING_FOUND -> stringResource(id = R.string.nothing_found)
+                },
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+
+    @FlowPreview
+    @ExperimentalCoroutinesApi
+    @Composable
+    fun SearchList(
+        searchResults: LazyPagingItems<SearchResult>
+    ) {
+        Box {
+            LazyColumn {
+                itemsIndexed(searchResults) { index, searchResult ->
+                    when (searchResult) {
+                        is MovieSearchResult -> MovieSearchListItem(
+                            movieSearchResult = searchResult,
+                            onMovieClick = { result ->
+                                findNavController().navigate(
+                                    SearchFragmentDirections.actionSearchFragmentToDetailMovieFragment(
+                                        result.id,
+                                        result.title,
+                                        result.originalTitle,
+                                        result.posterPath ?: "",
+                                        result.releaseDate ?: "",
+                                        result.backdropPath ?: ""
+                                    )
+                                )
+                            },
+                            shouldDrawTopLine = index != 0
+                        )
+                        is TvSearchResult -> TvSearchListItem(
+                            tvSearchResult = searchResult,
+                            onTvClick = { result ->
+                                findNavController().navigate(
+                                    SearchFragmentDirections.actionSearchFragmentToDetailTvFragment(
+                                        result.id,
+                                        result.name,
+                                        result.originalName,
+                                        result.posterPath ?: "",
+                                        result.firstAirDate ?: "",
+                                        "",
+                                        result.backdropPath ?: "",
+                                        false
+                                    )
+                                )
+                            },
+                            shouldDrawTopLine = index != 0
+                        )
+                        null -> return@itemsIndexed
+                    }
+                }
+            }
+
+            if (searchResults.loadState.refresh is LoadState.Loading)
+                DataLoadingProgress(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+        }
+    }
+
+    @Composable
+    fun MovieSearchListItem(
+        movieSearchResult: MovieSearchResult,
+        onMovieClick: (MovieSearchResult) -> Unit,
+        shouldDrawTopLine: Boolean
+    ) {
+        Column(
+            modifier = Modifier
+                .clickable {
+                    onMovieClick(movieSearchResult)
+                }
+                .background(
+                    color = MaterialTheme.colors.background
+                )
+        ) {
+            if (shouldDrawTopLine)
+                ItemTopLine()
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Poster(
+                    searchResult = movieSearchResult
+                )
+
+                MovieSearchInfo(
+                    movieSearchResult = movieSearchResult,
+                    modifier = Modifier.padding(start = 8.dp),
+                )
+            }
+        }
+    }
+
+    @Composable
+    fun TvSearchListItem(
+        tvSearchResult: TvSearchResult,
+        onTvClick: (TvSearchResult) -> Unit,
+        shouldDrawTopLine: Boolean
+    ) {
+        Column(
+            modifier = Modifier
+                .clickable {
+                    onTvClick(tvSearchResult)
+                }
+                .background(
+                    color = MaterialTheme.colors.background
+                )
+        ) {
+            if (shouldDrawTopLine)
+                ItemTopLine()
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Poster(
+                    searchResult = tvSearchResult
+                )
+
+                TvSearchInfo(
+                    tvSearchResult = tvSearchResult,
+                    modifier = Modifier.padding(start = 8.dp),
+                )
+            }
+        }
+    }
+
+    @Composable
+    fun ItemTopLine() {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(Color.Gray)
+        )
+    }
+
+    @Composable
+    fun Poster(searchResult: SearchResult, modifier: Modifier = Modifier) {
+        Image(
+            painter = rememberImagePainter(
+                ImageRequest.Builder(LocalContext.current)
+                    .data(
+                        data = requestFromImageUrl(
+                            when (searchResult) {
+                                is MovieSearchResult -> searchResult.posterPath
+                                is TvSearchResult -> searchResult.posterPath
+                            }, MEDIUM_SIZE
+                        )
+                    )
+                    .placeholder(R.drawable.cinema_dummy)
+                    .build()
+            ),
+            contentDescription = "Poster",
+            modifier = modifier
+                .size(
+                    width = 100.dp,
+                    height = 150.dp
+                )
+                .clip(RoundedCornerShape(8.dp))
+        )
+    }
+
+    @Composable
+    fun MovieSearchInfo(
+        movieSearchResult: MovieSearchResult,
+        modifier: Modifier = Modifier
+    ) {
+        Column(
+            modifier = modifier.height(150.dp)
+        ) {
+            Text(
+                text = movieSearchResult.title,
+                fontWeight = FontWeight.Bold
+            )
+            if (movieSearchResult.originalTitle != movieSearchResult.title)
+                Text(text = movieSearchResult.originalTitle)
+            Text(text = movieSearchResult.releaseDate.getYearFromDate())
+        }
+    }
+
+    @Composable
+    fun TvSearchInfo(
+        tvSearchResult: TvSearchResult,
+        modifier: Modifier = Modifier
+    ) {
+        Column(
+            modifier = modifier.height(150.dp)
+        ) {
+            Text(
+                text = tvSearchResult.name,
+                fontWeight = FontWeight.Bold
+            )
+            if (tvSearchResult.originalName != tvSearchResult.name)
+                Text(text = tvSearchResult.originalName)
+            Text(text = tvSearchResult.firstAirDate.getYearFromDate())
+        }
+    }
+
 }

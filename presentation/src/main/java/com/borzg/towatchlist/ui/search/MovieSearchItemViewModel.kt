@@ -9,10 +9,10 @@ class MovieSearchItemViewModel(private val movie: MovieSearchResult) {
         get() = movie.title
 
     val releaseDate: String
-        get() = movie.release_date.getYearFromDate()
+        get() = movie.releaseDate.getYearFromDate()
 
     val originalTitle: String
-        get() = movie.original_title
+        get() = movie.originalTitle
 
     val posterPath: String
         get() = movie.posterPath ?: ""

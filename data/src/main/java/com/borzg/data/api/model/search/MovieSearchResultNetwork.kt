@@ -21,11 +21,11 @@ data class MovieSearchResultNetwork(
             id = id,
             mediaType = mediaType,
             posterPath = posterPath,
-            original_title = original_title,
+            originalTitle = original_title,
             title = title,
             vote_average = vote_average,
-            release_date = release_date,
-            backdrop_path = backdrop_path,
-            vote_count = vote_count
+            releaseDate = release_date,
+            backdropPath = backdrop_path,
+            voteCount = vote_count
         )
 }

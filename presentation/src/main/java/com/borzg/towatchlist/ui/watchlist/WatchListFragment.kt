@@ -487,8 +487,10 @@ class WatchListFragment : Fragment() {
             if (tv.originalName != tv.name)
                 Text(text = tv.originalName)
             val dates = when {
-                tv.firstAirDate != null && tv.lastAirDate != null -> "${tv.firstAirDate.getYearFromDate()}-${tv.lastAirDate.getYearFromDate()}"
-                tv.firstAirDate != null && tv.lastAirDate == null -> "${tv.firstAirDate.getYearFromDate()}-..."
+                tv.firstAirDate != null && tv.lastAirDate != null ->
+                    "${tv.firstAirDate.getYearFromDate()}-${tv.lastAirDate.getYearFromDate()}"
+                tv.firstAirDate != null && tv.lastAirDate == null ->
+                    "${tv.firstAirDate.getYearFromDate()}-..."
                 else -> null
             }
             dates?.let {

@@ -18,7 +18,7 @@ class MovieSearchItemViewHolder(private val binding: LiMovieSearchBinding) :
                 originalTitle.setTextAndVisibility(vm.originalTitle)
             else originalTitle.hideView()
             poster.loadImageFromUrl(vm.posterPath)
-            loadImageToCache(item.backdrop_path, poster.context)
+            loadImageToCache(item.backdropPath, poster.context)
             root.setOnClickListener {
                 onListItemClickListener.invoke(item)
             }
