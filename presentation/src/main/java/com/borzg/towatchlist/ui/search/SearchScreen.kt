@@ -1,5 +1,6 @@
 package com.borzg.towatchlist.ui.search
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -39,7 +40,7 @@ import com.borzg.towatchlist.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
-enum class SearchInfoState {
+private enum class SearchInfoState {
     NO_QUERY,
     NOTHING_FOUND
 }
@@ -104,7 +105,9 @@ private fun SearchToolbar(
                     painter = painterResource(id = R.drawable.ic_search_24),
                     contentDescription = "Search movies and tv series icon"
                 )
-            }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
         )
     }
 }
@@ -137,7 +140,7 @@ private fun DataLoadingProgress(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun SearchInfoLayout(
+private fun SearchInfoLayout(
     searchInfoState: SearchInfoState
 ) {
     Box(
@@ -157,7 +160,7 @@ fun SearchInfoLayout(
 @FlowPreview
 @ExperimentalCoroutinesApi
 @Composable
-fun SearchList(
+private fun SearchList(
     searchResults: LazyPagingItems<SearchResult>,
     goToDetailMovieScreen: (MovieSearchResult) -> Unit,
     goToDetailTvScreen: (TvSearchResult) -> Unit
@@ -194,7 +197,7 @@ fun SearchList(
 }
 
 @Composable
-fun MovieSearchListItem(
+private fun MovieSearchListItem(
     movieSearchResult: MovieSearchResult,
     onMovieClick: (MovieSearchResult) -> Unit,
     shouldDrawTopLine: Boolean
@@ -228,7 +231,7 @@ fun MovieSearchListItem(
 }
 
 @Composable
-fun TvSearchListItem(
+private fun TvSearchListItem(
     tvSearchResult: TvSearchResult,
     onTvClick: (TvSearchResult) -> Unit,
     shouldDrawTopLine: Boolean
@@ -262,7 +265,7 @@ fun TvSearchListItem(
 }
 
 @Composable
-fun ItemTopLine() {
+private fun ItemTopLine() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -272,7 +275,7 @@ fun ItemTopLine() {
 }
 
 @Composable
-fun Poster(searchResult: SearchResult, modifier: Modifier = Modifier) {
+private fun Poster(searchResult: SearchResult, modifier: Modifier = Modifier) {
     Image(
         painter = rememberImagePainter(
             ImageRequest.Builder(LocalContext.current)
@@ -285,6 +288,7 @@ fun Poster(searchResult: SearchResult, modifier: Modifier = Modifier) {
                     )
                 )
                 .placeholder(R.drawable.cinema_dummy)
+                .error(R.drawable.cinema_dummy)
                 .build()
         ),
         contentDescription = "Poster",
@@ -298,7 +302,7 @@ fun Poster(searchResult: SearchResult, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun MovieSearchInfo(
+private fun MovieSearchInfo(
     movieSearchResult: MovieSearchResult,
     modifier: Modifier = Modifier
 ) {
@@ -316,7 +320,7 @@ fun MovieSearchInfo(
 }
 
 @Composable
-fun TvSearchInfo(
+private fun TvSearchInfo(
     tvSearchResult: TvSearchResult,
     modifier: Modifier = Modifier
 ) {
