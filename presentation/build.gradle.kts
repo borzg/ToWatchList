@@ -7,14 +7,6 @@ plugins {
 }
 
 android {
-    signingConfigs {
-        create("release") {
-            storeFile = file("C:\\Users\\Gena\\Documents\\Android\\toWatchListKeystore.jks")
-            storePassword = "5887858"
-            keyAlias = "toWatchListKey"
-            keyPassword = "5887858"
-        }
-    }
     compileSdk = 30
 
     defaultConfig {
