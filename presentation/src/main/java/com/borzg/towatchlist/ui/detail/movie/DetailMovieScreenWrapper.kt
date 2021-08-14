@@ -1,12 +1,17 @@
 package com.borzg.towatchlist.ui.detail.movie
 
-import android.os.Bundle
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -16,33 +21,33 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.navArgs
 import coil.compose.rememberImagePainter
 import coil.size.Scale
 import coil.transform.BlurTransformation
 import com.borzg.domain.model.Movie
 import com.borzg.towatchlist.BuildConfig
 import com.borzg.towatchlist.R
-import com.borzg.towatchlist.ui.detail.DetailCinemaElementFragment
-import com.borzg.towatchlist.utils.*
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.Flow
+import com.borzg.towatchlist.ui.detail.DetailCinemaElementScreenWrapper
+import com.borzg.towatchlist.utils.BIG_SIZE
+import com.borzg.towatchlist.utils.MEDIUM_SIZE
+import com.borzg.towatchlist.utils.getYearFromDate
+import com.borzg.towatchlist.utils.requestFromImageUrl
 
-@AndroidEntryPoint
-class DetailMovieFragment : DetailCinemaElementFragment<Movie>() {
+object DetailMovieScreenWrapper : DetailCinemaElementScreenWrapper<Movie, DetailMovieViewModel>() {
 
-    private val args: DetailMovieFragmentArgs by navArgs()
-
-    private val viewModel: DetailMovieViewModel by viewModels()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel.setupMovie(args.id)
+    @Composable
+    override fun DetailScreen(id: Int, viewModel: DetailMovieViewModel) {
+        viewModel.setupMovie(id)
+        val currentElement by viewModel.movie.collectAsState()
+        currentElement?.let {
+            DetailCinemaElementScreen(
+                cinemaElement = it,
+                viewModel = viewModel
+            )
+        } ?: run {
+            PlaceholderCinemaElementScreen()
+        }
     }
-
-    override val cinemaElement: Flow<Movie>
-        get() = viewModel.movie
 
     @Composable
     override fun PosterBackground(cinemaElement: Movie, modifier: Modifier) {
@@ -164,7 +169,8 @@ class DetailMovieFragment : DetailCinemaElementFragment<Movie>() {
     @Composable
     override fun AddToWatchlistButton(
         cinemaElement: Movie,
-        modifier: Modifier
+        modifier: Modifier,
+        viewModel: DetailMovieViewModel
     ) {
         val context = LocalContext.current
         val addedToWatchListString = stringResource(id = R.string.added_to_watchList)

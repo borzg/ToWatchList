@@ -1,14 +1,16 @@
 package com.borzg.towatchlist.ui.watchlist
 
-import androidx.lifecycle.*
-import com.borzg.domain.service.WatchListService
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.borzg.domain.model.CinemaElement
+import com.borzg.domain.service.WatchListService
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 
@@ -43,8 +45,8 @@ class WatchlistViewModel @Inject constructor(
         watchListService.getNumberOfViewsSince(0)
             .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
 
-    fun getContentFromWatchList(): Flow<List<CinemaElement>> =
-        watchListService.getWatchListContent()
+    val contentFromWatchList: StateFlow<List<CinemaElement>> =
+        watchListService.getWatchListContent().stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     fun removeFromWatchList(cinemaElement: CinemaElement) {
         viewModelScope.launch(Dispatchers.IO) {

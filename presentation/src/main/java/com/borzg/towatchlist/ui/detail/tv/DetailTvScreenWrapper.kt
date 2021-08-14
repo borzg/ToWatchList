@@ -1,9 +1,5 @@
 package com.borzg.towatchlist.ui.detail.tv
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -14,6 +10,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,34 +21,32 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.navArgs
 import coil.compose.rememberImagePainter
 import coil.size.Scale
 import coil.transform.BlurTransformation
-import com.borzg.domain.model.Movie
 import com.borzg.domain.model.Tv
-import com.borzg.towatchlist.BuildConfig
 import com.borzg.towatchlist.R
-import com.borzg.towatchlist.databinding.FrDetailTvBinding
-import com.borzg.towatchlist.ui.detail.DetailCinemaElementFragment
-import com.borzg.towatchlist.utils.*
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.Flow
+import com.borzg.towatchlist.ui.detail.DetailCinemaElementScreenWrapper
+import com.borzg.towatchlist.utils.BIG_SIZE
+import com.borzg.towatchlist.utils.MEDIUM_SIZE
+import com.borzg.towatchlist.utils.formatYearsPeriod
+import com.borzg.towatchlist.utils.requestFromImageUrl
 
-@AndroidEntryPoint
-class DetailTvFragment : DetailCinemaElementFragment<Tv>() {
+object DetailTvScreenWrapper : DetailCinemaElementScreenWrapper<Tv, DetailTvViewModel>() {
 
-    private val viewModel: DetailTvViewModel by viewModels()
-    private val args: DetailTvFragmentArgs by navArgs()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel.setupTv(args.id)
+    @Composable
+    override fun DetailScreen(id: Int, viewModel: DetailTvViewModel) {
+        viewModel.setupTv(id)
+        val currentElement by viewModel.tv.collectAsState(initial = null)
+        currentElement?.let {
+            DetailCinemaElementScreen(
+                cinemaElement = it,
+                viewModel = viewModel
+            )
+        } ?: run {
+            PlaceholderCinemaElementScreen()
+        }
     }
-
-    override val cinemaElement: Flow<Tv>
-        get() = viewModel.tv
 
     @Composable
     override fun PosterBackground(cinemaElement: Tv, modifier: Modifier) {
@@ -166,7 +162,8 @@ class DetailTvFragment : DetailCinemaElementFragment<Tv>() {
     @Composable
     override fun AddToWatchlistButton(
         cinemaElement: Tv,
-        modifier: Modifier
+        modifier: Modifier,
+        viewModel: DetailTvViewModel
     ) {
         val context = LocalContext.current
         val addedToWatchListString = stringResource(id = R.string.added_to_watchList)

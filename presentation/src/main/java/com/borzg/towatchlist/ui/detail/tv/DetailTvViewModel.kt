@@ -1,8 +1,9 @@
 package com.borzg.towatchlist.ui.detail.tv
 
-import androidx.lifecycle.*
-import com.borzg.domain.service.DetailTvService
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.borzg.domain.model.Tv
+import com.borzg.domain.service.DetailTvService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

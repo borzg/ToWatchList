@@ -4,7 +4,6 @@ import com.borzg.data.api.ApiKeyInterceptor
 import com.borzg.data.api.MultiTypeRequestDeserializer
 import com.borzg.data.api.TmdbApi
 import com.borzg.data.api.model.search.SearchResultNetwork
-import com.borzg.domain.model.search.SearchResult
 import com.borzg.towatchlist.BuildConfig
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder

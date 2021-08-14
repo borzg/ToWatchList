@@ -1,6 +1,5 @@
 package com.borzg.towatchlist.ui.search
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -28,5 +27,5 @@ class SearchViewModel @Inject constructor(
     val searchResults = searchQuery.debounce(800).flatMapLatest { query ->
         if (query.isBlank()) flowOf(PagingData.empty())
         else searchService.getMultiSearchResult(query)
-    }.stateIn(viewModelScope, SharingStarted.Lazily, initialValue = PagingData.empty())
+    }.stateIn(viewModelScope, SharingStarted.Lazily, initialValue = PagingData.empty()).cachedIn(viewModelScope)
 }

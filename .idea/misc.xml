@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Gena/AndroidStudioProjects/ToWatchList/presentation/src/main/res/drawable/ic_list_24.xml" value="0.5615384615384615" />
         <entry key="..\:/Users/Gena/AndroidStudioProjects/ToWatchList/presentation/src/main/res/font/montserrat.xml" value="0.5753846153846154" />
         <entry key="..\:/Users/Gena/AndroidStudioProjects/ToWatchList/presentation/src/main/res/layout/fr_detail_movie.xml" value="0.4773550724637681" />
         <entry key="..\:/Users/Gena/AndroidStudioProjects/ToWatchList/presentation/src/main/res/layout/fr_detail_tv.xml" value="0.2695035460992908" />
@@ -12,6 +13,7 @@
         <entry key="..\:/Users/Gena/AndroidStudioProjects/ToWatchList/presentation/src/main/res/layout/li_movie_watchlist.xml" value="0.46467391304347827" />
         <entry key="..\:/Users/Gena/AndroidStudioProjects/ToWatchList/presentation/src/main/res/layout/li_tv_watchlist.xml" value="0.5541666666666667" />
         <entry key="..\:/Users/Gena/AndroidStudioProjects/ToWatchList/presentation/src/main/res/layout/rating_bar_with_number.xml" value="0.4773550724637681" />
+        <entry key="..\:/Users/Gena/AndroidStudioProjects/ToWatchList/presentation/src/main/res/menu/nav_main_menu.xml" value="0.5541666666666667" />
       </map>
     </option>
   </component>

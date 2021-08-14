@@ -2,14 +2,10 @@ package com.borzg.towatchlist.ui.detail
 
 import android.content.Intent
 import android.net.Uri
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.animation.DecelerateInterpolator
-import android.widget.TextView
-import androidx.annotation.ColorInt
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.calculateTargetValue
 import androidx.compose.animation.splineBasedDecay
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -22,9 +18,7 @@ import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.SaverScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -37,72 +31,36 @@ import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.input.pointer.util.VelocityTracker
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.min
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModel
 import com.borzg.domain.model.CinemaElement
 import com.borzg.domain.model.Movie
 import com.borzg.domain.model.Tv
 import com.borzg.towatchlist.R
-import com.borzg.towatchlist.ui.theme.ToWatchListTheme
 import com.borzg.towatchlist.utils.formatToUsDollars
-import com.borzg.towatchlist.utils.hideView
-import com.borzg.towatchlist.utils.showView
-import com.borzg.towatchlist.utils.startAlphaAnimationIfHidden
 import com.borzg.towatchlist.utils.views.RatingBar
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import java.lang.IllegalStateException
 import kotlin.math.absoluteValue
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-abstract class DetailCinemaElementFragment<T : CinemaElement> : Fragment() {
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return ComposeView(requireContext()).apply {
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-            )
-
-            setContent {
-                ToWatchListTheme {
-                    val currentElement by cinemaElement.collectAsState(initial = null)
-                    currentElement?.let {
-                        DetailCinemaElementScreen(
-                            cinemaElement = it
-                        )
-                    } ?: run {
-                        PlaceholderCinemaElementScreen()
-                    }
-                }
-            }
-        }
-    }
-
-
-    abstract val cinemaElement: Flow<T>
+abstract class DetailCinemaElementScreenWrapper<T : CinemaElement, VM: ViewModel> {
 
     @Composable
-    open fun DetailCinemaElementScreen(cinemaElement: T) {
+    abstract fun DetailScreen(id: Int, viewModel: VM)
+
+    @Composable
+    open fun DetailCinemaElementScreen(cinemaElement: T, viewModel: VM) {
         val toolbarHeight = 300.dp
         val toolbarHeightPx = with(LocalDensity.current) { toolbarHeight.roundToPx().toFloat() }
         val offset = rememberSaveable(saver = object : Saver<Animatable<Float, AnimationVector1D>, Float> {
@@ -245,7 +203,8 @@ abstract class DetailCinemaElementFragment<T : CinemaElement> : Fragment() {
                         end.linkTo(detailsLayout.end, 16.dp)
                         bottom.linkTo(detailsLayout.top)
                     }
-                    .scale(fabScaleAnimation)
+                    .scale(fabScaleAnimation),
+                viewModel = viewModel
             )
         }
     }
@@ -260,7 +219,7 @@ abstract class DetailCinemaElementFragment<T : CinemaElement> : Fragment() {
     abstract fun DetailsLayout(cinemaElement: T, modifier: Modifier)
 
     @Composable
-    abstract fun AddToWatchlistButton(cinemaElement: T, modifier: Modifier)
+    abstract fun AddToWatchlistButton(cinemaElement: T, modifier: Modifier, viewModel: VM)
 
     @Composable
     open fun PlaceholderCinemaElementScreen() {
@@ -543,96 +502,6 @@ abstract class DetailCinemaElementFragment<T : CinemaElement> : Fragment() {
         }
     }
 
-    fun FloatingActionButton.setStateDependingOnCinemaElementState(cinemaElement: CinemaElement) {
-        val isElementAddedToDb = cinemaElement.isDisplayedInWatchList == true
-        if (visibility == View.GONE && !isElementAddedToDb) {
-            show()
-            return
-        }
-        if (visibility == View.VISIBLE && isElementAddedToDb) {
-            hideFab()
-            return
-        }
-    }
-
-    /**
-     * Creates a ViewBinder to layout and add it to viewBindersSet
-     * Should be used in initializeBinders() function
-     * @param binder returns boolean defines if bind was success
-     */
-    fun addBinderForLayout(layout: View, binder: CinemaElement.() -> Boolean) {
-//        viewBindersSet.add(ViewBinder(layout, binder))
-    }
-
-    /**
-     * Binds details layout in accordance with the initialized ViewBinders
-     * Should be used when fragment view is created
-     * @throws IllegalStateException when viewBindersSet is empty, which means that initializeBinders() were not override
-     * or contains a mistake
-     */
-    fun bindDetailsLayout(element: CinemaElement) {
-//        if (viewBindersSet.isEmpty()) throw IllegalStateException("ViewBinders are not initialized. Maybe you forget to override initializeBinders()")
-//        viewBindersSet.forEach { viewBinder -> viewBinder.bind(element) }
-//        if (bindingWasFailed()) showNothing()
-//        else showDetailLayout()
-    }
-
-    /**
-     * @see bindDetailsLayout Supports same functionality but with a simple alpha entry animation
-     */
-    fun bindDetailsLayoutWithAnimation(element: CinemaElement) {
-//        if (viewBindersSet.isEmpty()) throw IllegalStateException("ViewBinders are not initialized. Maybe you forget to override initializeBinders()")
-//        viewBindersSet.forEach { viewBinder -> viewBinder.bindWithAnimation(element) }
-//        if (bindingWasFailed()) showNothing()
-//        else showDetailLayout()
-    }
-
-    private fun bindingWasFailed(): Boolean {
-//        val successList = viewBindersSet.filter { it.isSuccess }
-//        return successList.isEmpty()
-        return false
-    }
-
-    /**
-     * Simple animation for poster
-     * Combines in itself alpha and y-translation effects
-     */
-    fun View.animatePosterAppearance() {
-        val yAnimationValue = 150f
-        showView()
-        translationY += yAnimationValue
-        scaleX = 0.6f
-        scaleY = 0.6f
-        alpha = 0.4f
-        val animation = animate().translationYBy(-yAnimationValue).scaleX(1f).scaleY(1f).alpha(1f)
-        animation.duration = 600
-        animation.interpolator = DecelerateInterpolator()
-        animation.start()
-    }
-
-    /**
-     * Hides fab with animation
-     */
-    private fun FloatingActionButton.hideFab() {
-        val params = layoutParams as CoordinatorLayout.LayoutParams
-        val behavior = params.behavior as FloatingActionButton.Behavior
-        behavior.isAutoHideEnabled = false
-        hide()
-    }
-
-    private fun clearBinders() {
-//        viewBindersSet.clear()
-    }
-
-    @ColorInt
-    private fun getColorForPerformance(performance: Float): Int {
-        if (performance < 0 || performance > 10) return resources.getColor(R.color.primaryTextColor)
-        if (performance < 4) return resources.getColor(R.color.awfulPerformance)
-        if (performance < 6) return resources.getColor(R.color.mediumPerformance)
-        if (performance < 8) return resources.getColor(R.color.goodPerformance)
-        return resources.getColor(R.color.perfectPerformance)
-    }
-
     @Composable
     fun colorForPerformance(performance: Float): Color {
         return when {
@@ -642,36 +511,5 @@ abstract class DetailCinemaElementFragment<T : CinemaElement> : Fragment() {
             performance < 8 -> colorResource(id = R.color.goodPerformance)
             else -> colorResource(id = R.color.perfectPerformance)
         }
-    }
-
-    /**
-     * Sets the text color depending on the rating
-     * @param rating must belong to the range of 0 to 10
-     */
-    fun TextView.setTextColorForRating(rating: Float) {
-        this.setTextColor(getColorForPerformance(rating))
-    }
-
-    /**
-     * Class containing logic of binding layouts with current cinemaElement
-     * @param layout keeps layout which will hide if binding was failed
-     * @param binder keeps binding logic for layout that will be define in children fragments
-     */
-    private data class ViewBinder(var layout: View, var binder: CinemaElement.() -> Boolean) {
-
-        var isSuccess: Boolean = false
-
-        fun bind(element: CinemaElement) {
-            isSuccess = binder.invoke(element)
-            if (isSuccess) layout.showView()
-            else layout.hideView()
-        }
-
-        fun bindWithAnimation(element: CinemaElement, animationDuration: Long = 400) {
-            isSuccess = binder.invoke(element)
-            if (isSuccess) layout.startAlphaAnimationIfHidden(animationDuration)
-            else layout.hideView()
-        }
-
     }
 }
