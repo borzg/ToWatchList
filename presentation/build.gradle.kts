@@ -7,6 +7,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        create("release") {
+            storeFile = file("C:\\Users\\Gena\\Documents\\Android\\toWatchListKeystore.jks")
+            storePassword = "5887858"
+            keyAlias = "toWatchListKey"
+            keyPassword = "5887858"
+        }
+    }
     compileSdk = 30
 
     defaultConfig {
@@ -27,7 +35,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
@@ -50,9 +58,6 @@ dependencies {
     implementation(project(Modules.data))
     implementation(project(Modules.domain))
 
-    implementation(Dependencies.coreCtx)
-    implementation(Dependencies.appCompat)
-    implementation(Dependencies.material)
     testImplementation(Dependencies.jUnit)
     androidTestImplementation(Dependencies.jUnitExt)
     androidTestImplementation(Dependencies.espresso)
@@ -87,8 +92,4 @@ dependencies {
     // Paging
     implementation(Dependencies.pagingRuntime)
     implementation(Dependencies.pagingCommon)
-
-    // Coroutines
-    implementation(Dependencies.coroutinesCore)
-    implementation(Dependencies.coroutinesAndroid)
 }

@@ -1,9 +1,11 @@
 package com.borzg.data.api.model
 
+import androidx.annotation.Keep
 import com.borzg.data.commons.DomainMapper
 import com.borzg.domain.model.Tv
 import com.google.gson.annotations.SerializedName
 
+@Keep
 data class TvNetwork(
     @SerializedName("id") val id: Int,
     @SerializedName("backdrop_path") val backdropPath: String?,

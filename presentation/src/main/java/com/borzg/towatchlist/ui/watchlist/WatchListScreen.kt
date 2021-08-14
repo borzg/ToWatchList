@@ -10,26 +10,26 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.unit.*
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -43,7 +43,6 @@ import com.borzg.domain.model.Tv
 import com.borzg.towatchlist.R
 import com.borzg.towatchlist.navigation.Screen
 import com.borzg.towatchlist.utils.*
-import kotlin.math.roundToInt
 
 @ExperimentalCoilApi
 @Composable
@@ -52,55 +51,20 @@ fun WatchlistScreen(
     viewModel: WatchlistViewModel = viewModel()
 ) {
     val toolbarHeight = 250.dp
-    val toolbarHeightPx = with(LocalDensity.current) { toolbarHeight.roundToPx().toFloat() }
-    var toolbarOffsetHeightPx by rememberSaveable { mutableStateOf(0f) }
-
-    val nestedScrollConnection = remember {
-        object : NestedScrollConnection {
-            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                val delta = available.y
-                val newOffset = toolbarOffsetHeightPx + delta
-                toolbarOffsetHeightPx = newOffset.coerceIn(-toolbarHeightPx, 0f)
-                return Offset.Zero
-            }
+    WatchList(
+        viewModel = viewModel,
+        toolbarHeight = toolbarHeight,
+        goToDetailMovieScreen = { movie ->
+            navController.navigate("${Screen.MovieDetails.route}/${movie.id}")
+        },
+        goToDetailTvScreen = { tv ->
+            navController.navigate("${Screen.TvDetails.route}/${tv.id}")
         }
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .nestedScroll(nestedScrollConnection)
-    ) {
-        val allTimeViewsCount by viewModel.numberOfViewsForAllTime.collectAsState()
-        val monthViewsCount by viewModel.numberOfViewsForMonth.collectAsState()
-        val weekViewsCount by viewModel.numberOfViewsForWeek.collectAsState()
-        StatisticToolbar(
-            allTimeViewsCount = allTimeViewsCount,
-            monthViewsCount = monthViewsCount,
-            weekViewsCount = weekViewsCount,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(toolbarHeight)
-                .offset {
-                    IntOffset(x = 0, y = (toolbarOffsetHeightPx / 2f).roundToInt())
-                }
-        )
-
-        WatchList(
-            viewModel = viewModel,
-            toolbarHeight = toolbarHeight,
-            goToDetailMovieScreen = { movie ->
-                navController.navigate("${Screen.MovieDetails.route}/${movie.id}")
-            },
-            goToDetailTvScreen = { tv ->
-                navController.navigate("${Screen.TvDetails.route}/${tv.id}")
-            }
-        )
-    }
+    )
 }
 
 @Composable
-fun StatisticToolbar(
+private fun StatisticToolbar(
     allTimeViewsCount: Int,
     monthViewsCount: Int,
     weekViewsCount: Int,
@@ -110,9 +74,11 @@ fun StatisticToolbar(
         modifier = modifier
     ) {
         val (allViews, monthViews, weekViews, background) = createRefs()
+        createVerticalChain(allViews, monthViews)
+        createVerticalChain(allViews, weekViews)
         Image(
             painter = painterResource(id = R.drawable.cosmos),
-            contentDescription ="Statistics background",
+            contentDescription = "Statistics background",
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxSize()
@@ -129,12 +95,6 @@ fun StatisticToolbar(
             textSize = 26f.sp,
             modifier = Modifier.constrainAs(monthViews) {
                 start.linkTo(parent.start, 32.dp)
-                linkTo(
-                    top = parent.top,
-                    bottom = parent.bottom,
-                    bias = 0.7f
-                )
-                end.linkTo(allViews.start)
             }
         )
         NumberWithDescription(
@@ -143,11 +103,6 @@ fun StatisticToolbar(
             textSize = 46f.sp,
             modifier = Modifier.constrainAs(allViews) {
                 start.linkTo(monthViews.end)
-                linkTo(
-                    top = parent.top,
-                    bottom = parent.bottom,
-                    bias = 0.3f
-                )
                 end.linkTo(weekViews.start)
             }
         )
@@ -156,12 +111,6 @@ fun StatisticToolbar(
             description = stringResource(id = R.string.views_for_week),
             textSize = 26f.sp,
             modifier = Modifier.constrainAs(weekViews) {
-                start.linkTo(allViews.end)
-                linkTo(
-                    top = parent.top,
-                    bottom = parent.bottom,
-                    bias = 0.7f
-                )
                 end.linkTo(parent.end, 32.dp)
             }
         )
@@ -178,11 +127,25 @@ fun WatchList(
     viewModel: WatchlistViewModel = viewModel()
 ) {
     val cinemaElements by viewModel.contentFromWatchList.collectAsState()
+    val allTimeViewsCount by viewModel.numberOfViewsForAllTime.collectAsState()
+    val monthViewsCount by viewModel.numberOfViewsForMonth.collectAsState()
+    val weekViewsCount by viewModel.numberOfViewsForWeek.collectAsState()
 
-    LazyColumn(
+    if (cinemaElements.isEmpty()) NothingAdded()
+    else LazyColumn(
         modifier = modifier,
-        contentPadding = PaddingValues(top = toolbarHeight),
         content = {
+            item {
+                StatisticToolbar(
+                    allTimeViewsCount = allTimeViewsCount,
+                    monthViewsCount = monthViewsCount,
+                    weekViewsCount = weekViewsCount,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(toolbarHeight)
+                )
+            }
+
             itemsIndexed(cinemaElements) { index, item ->
                 when (item) {
                     is Movie -> MovieListItem(
@@ -218,6 +181,18 @@ fun WatchList(
 }
 
 @Composable
+fun NothingAdded() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(text = stringResource(id = R.string.your_watchlist_is_empty))
+    }
+}
+
+@Composable
 fun NumberWithDescription(
     number: Int,
     description: String,
@@ -249,7 +224,7 @@ fun NumberWithDescription(
 @ExperimentalCoilApi
 @Preview
 @Composable
-fun MovieListItem(
+private fun MovieListItem(
     @PreviewParameter(FakeMoviePreviewProvider::class) movie: Movie,
     onMovieClick: (Movie) -> Unit = {},
     onChangeMovieWatchedState: (Movie) -> Unit = {},
@@ -295,7 +270,7 @@ fun MovieListItem(
 
 @ExperimentalCoilApi
 @Composable
-fun TvListItem(
+private fun TvListItem(
     tv: Tv,
     onChangeTvWatchedState: (Tv) -> Unit,
     onTvClick: (Tv) -> Unit,
@@ -340,15 +315,17 @@ fun TvListItem(
 }
 
 @Composable
-fun ItemTopLine() {
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .height(1.dp)
-        .background(Color.Gray))
+private fun ItemTopLine() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(1.dp)
+            .background(Color.Gray)
+    )
 }
 
 @Composable
-fun AddedAt(cinemaElement: CinemaElement, modifier: Modifier = Modifier) {
+private fun AddedAt(cinemaElement: CinemaElement, modifier: Modifier = Modifier) {
     if (cinemaElement.addTime == null) return
     Box(
         modifier = modifier,
@@ -368,7 +345,7 @@ fun AddedAt(cinemaElement: CinemaElement, modifier: Modifier = Modifier) {
 
 @ExperimentalCoilApi
 @Composable
-fun Poster(cinemaElement: CinemaElement, modifier: Modifier = Modifier) {
+private fun Poster(cinemaElement: CinemaElement, modifier: Modifier = Modifier) {
     Image(
         painter = rememberImagePainter(
             ImageRequest.Builder(LocalContext.current)
@@ -395,25 +372,30 @@ fun Poster(cinemaElement: CinemaElement, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun MovieShortInfo(
+private fun MovieShortInfo(
     movie: Movie,
     onChangeMovieWatchStateClick: (Movie) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.height(150.dp)
+        modifier = modifier
     ) {
         Text(
             text = movie.title,
             fontWeight = FontWeight.Bold
         )
         if (movie.originalTitle != movie.title)
-            Text(text = movie.originalTitle)
-        Text(text = movie.releaseDate.getYearFromDate())
+            Text(
+                text = movie.originalTitle
+            )
+        Text(
+            text = movie.releaseDate.getYearFromDate()
+        )
         Box(
             modifier = Modifier
-                .fillMaxSize()
-                .weight(1f),
+                .fillMaxWidth()
+                .padding(top = 4.dp)
+                .height(50.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -424,20 +406,21 @@ fun MovieShortInfo(
                         onChangeMovieWatchStateClick(movie)
                     }
                     .padding(4.dp),
-                color = MaterialTheme.colors.primary
+                color = MaterialTheme.colors.primary,
+                textAlign = TextAlign.Center
             )
         }
     }
 }
 
 @Composable
-fun TvShortInfo(
+private fun TvShortInfo(
     tv: Tv,
     onChangeTvWatchStateClick: (Tv) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.height(150.dp)
+        modifier = modifier
     ) {
         Text(
             text = tv.name,
@@ -457,8 +440,9 @@ fun TvShortInfo(
         }
         Box(
             modifier = Modifier
-                .fillMaxSize()
-                .weight(1f),
+                .fillMaxWidth()
+                .padding(top = 4.dp)
+                .height(50.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -469,7 +453,8 @@ fun TvShortInfo(
                         onChangeTvWatchStateClick(tv)
                     }
                     .padding(4.dp),
-                color = MaterialTheme.colors.primary
+                color = MaterialTheme.colors.primary,
+                textAlign = TextAlign.Center
             )
         }
     }

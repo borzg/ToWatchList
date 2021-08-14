@@ -1,11 +1,12 @@
 package com.borzg.data.api.model
 
+import androidx.annotation.Keep
 import androidx.room.Entity
 import com.borzg.data.commons.DomainMapper
 import com.borzg.domain.model.Movie
 import com.google.gson.annotations.SerializedName
 
-@Entity(tableName = "movie")
+@Keep
 data class MovieNetwork(
     @SerializedName("id") val id: Int,
     @SerializedName("backdrop_path") val backdrop_path: String?,

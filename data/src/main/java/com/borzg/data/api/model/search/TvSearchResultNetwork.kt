@@ -1,9 +1,11 @@
 package com.borzg.data.api.model.search
 
+import androidx.annotation.Keep
 import com.borzg.data.commons.DomainMapper
 import com.borzg.domain.model.search.TvSearchResult
 import com.google.gson.annotations.SerializedName
 
+@Keep
 data class TvSearchResultNetwork(
     @SerializedName("id") override val id: Int,
     @SerializedName("media_type") override val mediaType: String,

@@ -1,9 +1,11 @@
 package com.borzg.data.api.model
 
+import androidx.annotation.Keep
 import com.borzg.data.commons.DomainMapper
 import com.borzg.domain.model.tv.Episode
 import com.google.gson.annotations.SerializedName
 
+@Keep
 data class EpisodeNetwork(
     @SerializedName("air_date") val airDate: String,
     @SerializedName("episode_number") val episodeNumber: Int,

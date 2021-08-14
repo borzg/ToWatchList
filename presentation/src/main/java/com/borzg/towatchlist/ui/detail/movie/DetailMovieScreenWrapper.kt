@@ -1,5 +1,6 @@
 package com.borzg.towatchlist.ui.detail.movie
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -39,6 +40,7 @@ object DetailMovieScreenWrapper : DetailCinemaElementScreenWrapper<Movie, Detail
     override fun DetailScreen(id: Int, viewModel: DetailMovieViewModel) {
         viewModel.setupMovie(id)
         val currentElement by viewModel.movie.collectAsState()
+        Log.d("TAG", "DetailScreen: $currentElement")
         currentElement?.let {
             DetailCinemaElementScreen(
                 cinemaElement = it,

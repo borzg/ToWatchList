@@ -46,11 +46,6 @@ class WatchlistViewModel @Inject constructor(
             .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
 
     val contentFromWatchList: StateFlow<List<CinemaElement>> =
-        watchListService.getWatchListContent().stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+        watchListService.getWatchListContent().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
-    fun removeFromWatchList(cinemaElement: CinemaElement) {
-        viewModelScope.launch(Dispatchers.IO) {
-            watchListService.removeItemFromWatchList(cinemaElement)
-        }
-    }
 }

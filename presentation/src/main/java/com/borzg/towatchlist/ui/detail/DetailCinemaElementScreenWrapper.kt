@@ -409,7 +409,10 @@ abstract class DetailCinemaElementScreenWrapper<T : CinemaElement, VM: ViewModel
         ) {
             RatingBar(
                 rating = rating,
-                modifier = Modifier.height(20.dp),
+                modifier = Modifier.size(
+                    width = 190.dp,
+                    height = 20.dp
+                ),
                 color = MaterialTheme.colors.secondary
             )
             Text(

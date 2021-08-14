@@ -1,9 +1,11 @@
 package com.borzg.data.api.model
 
+import androidx.annotation.Keep
 import com.borzg.data.commons.DomainMapper
 import com.borzg.domain.model.common.Person
 import com.google.gson.annotations.SerializedName
 
+@Keep
 data class PersonNetwork(
     @SerializedName("id") val id: Int,
     @SerializedName("birthday") val birthday: String?,
