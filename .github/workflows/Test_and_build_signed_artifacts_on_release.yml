@@ -28,6 +28,7 @@ jobs:
           token: ${{ secrets.KEYSTORE_ACCESS_TOKEN }}
           path: presentation/keystore
 
-      - name: Check if file exists
-        run: |	
-          echo hello > presentation/keystore/toWatchListKeystore.jks
+      - name: "Check file existence"
+        uses: andstor/file-existence-action@v1
+        with: 
+          files: "toWatchListKeystore.jks"
