@@ -1,10 +1,8 @@
-name: Test_and_build_signed_artifacts_on_release
+name: Test and build signed artifacts on release
 
 on:
   pull_request:
     branches: [ master ]
-  push: 
-    branches: [ master ] 
 
 env:
   KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
@@ -28,7 +26,7 @@ jobs:
         with:
           repository: ${{ secrets.KEYSTORE_GIT_REPOSITORY }}
           token: ${{ secrets.KEYSTORE_ACCESS_TOKEN }}
-          path: app/keystore
+          path: presentation/keystore
 
       - name: Run tests and build release artifacts
         run: |
@@ -39,4 +37,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: app-release.apk
-          path: app/build/outputs/apk/release/app-release.apk
+          path: presentation/build/outputs/apk/release/app-release.apk
