@@ -11,7 +11,7 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file("keystore/my_app_keystore")
+            storeFile = file("keystore/toWatchListKeystore")
             storePassword = System.getenv("KEYSTORE_PASSWORD")
             keyAlias = System.getenv("RELEASE_SIGN_IN_KEYSTORE_ALIAS")
             keyPassword = System.getenv("RELEASE_SIGN_IN_KEYSTORE_ALIAS_PASSWORD")
@@ -38,6 +38,7 @@ android {
         release {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
