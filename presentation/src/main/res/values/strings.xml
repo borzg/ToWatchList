@@ -59,4 +59,5 @@
         <item>November</item>
         <item>December</item>
     </string-array>
+    <string name="rating">Rating</string>
 </resources>

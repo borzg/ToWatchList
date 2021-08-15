@@ -407,13 +407,8 @@ abstract class DetailCinemaElementScreenWrapper<T : CinemaElement, VM: ViewModel
             modifier = modifier,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            RatingBar(
-                rating = rating,
-                modifier = Modifier.size(
-                    width = 190.dp,
-                    height = 20.dp
-                ),
-                color = MaterialTheme.colors.secondary
+            Text(
+                text = stringResource(id = R.string.rating)
             )
             Text(
                 text = rating.toString(),
@@ -461,7 +456,6 @@ abstract class DetailCinemaElementScreenWrapper<T : CinemaElement, VM: ViewModel
                 },
                 modifier = Modifier
                     .weight(1f)
-                    .padding(top = 8.dp)
             )
         }
     }
