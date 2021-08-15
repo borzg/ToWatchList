@@ -30,5 +30,4 @@ jobs:
 
       - name: Check if file exists
         run: |	
-          echo hello > presentation/keystore
-          echo hello2 > presentation/keystore/toWatchListKeystore
+          echo hello > presentation/keystore/toWatchListKeystore.jks
