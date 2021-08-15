@@ -9,6 +9,15 @@ plugins {
 android {
     compileSdk = 30
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("keystore/my_app_keystore")
+            storePassword = System.getenv("KEYSTORE_PASSWORD")
+            keyAlias = System.getenv("RELEASE_SIGN_IN_KEYSTORE_ALIAS")
+            keyPassword = System.getenv("RELEASE_SIGN_IN_KEYSTORE_ALIAS_PASSWORD")
+        }
+    }
+
     defaultConfig {
         applicationId = "com.borzg.towatchlist"
         minSdk = 21
