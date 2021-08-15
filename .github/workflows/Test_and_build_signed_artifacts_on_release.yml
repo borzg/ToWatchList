@@ -28,13 +28,7 @@ jobs:
           token: ${{ secrets.KEYSTORE_ACCESS_TOKEN }}
           path: presentation/keystore
 
-      - name: Run tests and build release artifacts
-        run: |
-          ./gradlew test
-          ./gradlew assembleRelease --stacktrace
-          
-      - name: Upload signed APK
-        uses: actions/upload-artifact@v2
-        with:
-          name: presentation-release.apk
-          path: presentation/build/outputs/apk/release/presentation-release.apk
+      - name: Check if file exists
+        run: |	
+          echo hello > presentation/keystore
+          echo hello2 > presentation/keystore/toWatchListKeystore
