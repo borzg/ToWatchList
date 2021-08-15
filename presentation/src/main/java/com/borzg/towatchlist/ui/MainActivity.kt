@@ -56,6 +56,7 @@ class MainActivity : AppCompatActivity() {
         navController: NavHostController,
         bottomNavigationItems: List<Screen.BottomNavigation>
     ) {
+
         Scaffold(
             bottomBar = {
                 BottomNavigation(
