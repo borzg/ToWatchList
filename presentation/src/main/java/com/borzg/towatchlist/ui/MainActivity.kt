@@ -95,7 +95,6 @@ class MainActivity : AppCompatActivity() {
                 startDestination = Screen.BottomNavigation.WatchList.route,
                 Modifier.padding(innerPadding)
             ) {
-
                 composable(Screen.BottomNavigation.WatchList.route) {
                     WatchlistScreen(
                         navController,
