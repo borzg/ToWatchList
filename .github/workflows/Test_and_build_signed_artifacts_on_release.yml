@@ -13,7 +13,7 @@ env:
 
 jobs:
   build_apk:
-    if: startsWith(github.head_ref, 'dev/') == true
+    if: contains(github.head_ref, 'dev') == true
     name: Build release artifacts
     runs-on: ubuntu-20.04
     steps:
