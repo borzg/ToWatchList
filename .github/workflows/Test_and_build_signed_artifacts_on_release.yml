@@ -37,4 +37,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: presentation-release.apk
-          path: presentation/build/outputs/pk/release/presentation-release.apk
+          path: presentation/build/outputs/apk/release/presentation-release.apk
