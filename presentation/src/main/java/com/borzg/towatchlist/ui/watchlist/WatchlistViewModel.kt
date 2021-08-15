@@ -1,49 +1,51 @@
 package com.borzg.towatchlist.ui.watchlist
 
-import androidx.hilt.Assisted
-import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.*
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.borzg.domain.model.CinemaElement
 import com.borzg.domain.service.WatchListService
-import com.borzg.domain.model.common.CinemaElement
-import kotlinx.coroutines.*
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import java.util.*
+import javax.inject.Inject
 
-class WatchlistViewModel @ViewModelInject constructor(
+@HiltViewModel
+class WatchlistViewModel @Inject constructor(
     private val watchListService: WatchListService,
-    @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    suspend fun setWatchedState(isWatched: Boolean, cinemaElement: CinemaElement) {
-        withContext(Dispatchers.IO) {
+    private companion object {
+        const val MINUTE = 60 * 1000L
+        const val HOUR = MINUTE * 60
+        const val ONE_DAY = HOUR * 24
+        const val ONE_WEEK = ONE_DAY * 7
+        const val ONE_MONTH = ONE_WEEK * 4
+    }
+
+    fun setWatchedState(isWatched: Boolean, cinemaElement: CinemaElement) {
+        viewModelScope.launch {
             watchListService.setWatchedState(isWatched, cinemaElement)
         }
     }
 
-    val MINUTE = 60 * 1000L
-    val HOUR = MINUTE * 60
-    val ONE_DAY = HOUR * 24
-    val ONE_WEEK = ONE_DAY * 7
-    val ONE_MONTH = ONE_WEEK * 4
+    val numberOfViewsForWeek: StateFlow<Int> =
+        watchListService.getNumberOfViewsSince(Date().time - ONE_WEEK)
+            .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
 
-    fun numberOfViewsForWeek(): LiveData<Int> {
-        val time = Date().time - ONE_WEEK
-        return watchListService.getNumberOfViewsSince(time).asLiveData()
-    }
+    val numberOfViewsForMonth: StateFlow<Int> =
+        watchListService.getNumberOfViewsSince(Date().time - ONE_MONTH)
+            .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
 
-    fun numberOfViewsForMonth(): LiveData<Int> {
-        val time = Date().time - ONE_MONTH
-        return watchListService.getNumberOfViewsSince(time).asLiveData()
-    }
+    val numberOfViewsForAllTime: StateFlow<Int> =
+        watchListService.getNumberOfViewsSince(0)
+            .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
 
-    fun numberOfViewsForAllTime(): LiveData<Int> =
-        watchListService.getNumberOfViewsSince(0).asLiveData()
+    val contentFromWatchList: StateFlow<List<CinemaElement>> =
+        watchListService.getWatchListContent().stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
-    fun getContentFromWatchList(): LiveData<List<CinemaElement>> =
-        watchListService.getWatchListContent().asLiveData()
-
-    fun removeFromWatchList(cinemaElement: CinemaElement) {
-        viewModelScope.launch(Dispatchers.IO) {
-            watchListService.removeItemFromWatchList(cinemaElement)
-        }
-    }
 }

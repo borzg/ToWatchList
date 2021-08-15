@@ -1,8 +1,8 @@
 package com.borzg.towatchlist.di
 
 import com.borzg.data.repository.*
-import com.borzg.domain.model.DB
-import com.borzg.domain.model.Server
+import com.borzg.domain.DB
+import com.borzg.domain.Server
 import com.borzg.domain.repository.AdditionalCinemaRepository
 import com.borzg.domain.repository.CinemaSearchRepository
 import com.borzg.domain.repository.DetailCinemaRepository
@@ -10,28 +10,26 @@ import com.borzg.domain.repository.WatchListRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
-import dagger.hilt.android.components.ApplicationComponent
-import dagger.hilt.android.components.FragmentComponent
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
-@InstallIn(ActivityComponent::class)
+@InstallIn(SingletonComponent::class)
 interface RepositoryModule {
 
-    @Binds @Server
+    @Binds @Server @Singleton
     fun bindCinemaDetailServerRepository(cinemaDetailServerRepository: DetailServerRepository) : DetailCinemaRepository
 
-    @Binds @Server
+    @Binds @Server @Singleton
     fun bindCinemaSearchServerRepository(cinemaSearchServerRepository: CinemaSearchServerRepository) : CinemaSearchRepository
 
-    @Binds @DB
+    @Binds @DB @Singleton
     fun bindCinemaDetailDbRepository(cinemaDetailDbRepository: DetailDbRepository) : DetailCinemaRepository
 
-    @Binds @DB
+    @Binds @DB @Singleton
     fun bindWatchListRepository(watchListDbRepository: WatchListDbRepository) : WatchListRepository
 
-    @Binds
+    @Binds @Singleton
     fun bindAdditionalCinemaRepository(additionalRepository: AdditionalRepository) : AdditionalCinemaRepository
 
 }

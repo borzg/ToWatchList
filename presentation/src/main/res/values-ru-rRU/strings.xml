@@ -52,4 +52,5 @@
     </string-array>
     <string name="no_search_text">Воспользуйтесь поиском, чтобы найти фильмы, сериалы и ТВ-шоу</string>
     <string name="date_time_error">Ошибка. Возможно, на вашем устройсте неправильно установлены дата и время</string>
+    <string name="rating">Оценка</string>
 </resources>

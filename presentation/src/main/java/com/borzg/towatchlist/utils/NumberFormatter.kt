@@ -1,19 +1,10 @@
 package com.borzg.towatchlist.utils
 
-import java.lang.StringBuilder
-import java.util.*
-
 fun Int.formatToUsDollars() : String =
     numberByDigits(this.toLong()) + "\$"
 
 fun Long.formatToUsDollars() : String =
     numberByDigits(this) + "\$"
-
-fun Long.getDate() : String {
-    val date = Date(this)
-    return date.toString()
-}
-
 
 fun numberByDigits(num : Long) : String {
     val tmp = StringBuilder(num.toString())

@@ -2,21 +2,28 @@ package com.borzg.data.repository
 
 import android.util.Log
 import com.borzg.data.database.CinemaDao
+import com.borzg.data.database.model.toEntity
 import com.borzg.domain.model.Movie
-import com.borzg.domain.model.common.CinemaElement
-import com.borzg.domain.model.tv.Tv
+import com.borzg.domain.model.CinemaElement
+import com.borzg.domain.model.Tv
 import com.borzg.domain.repository.WatchListRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
-class WatchListDbRepository @Inject constructor(val cinemaDao: CinemaDao): WatchListRepository {
+class WatchListDbRepository @Inject constructor(
+    private val cinemaDao: CinemaDao
+): WatchListRepository {
 
     override suspend fun setWatchedState(isWatched: Boolean, cinemaElement: CinemaElement) {
-        cinemaElement.isWatched = isWatched
-        if (isWatched) cinemaElement.watchedAt = System.currentTimeMillis()
-        if (cinemaElement is Movie) cinemaDao.updateMovie(cinemaElement)
-        if (cinemaElement is Tv) cinemaDao.updateTv(cinemaElement)
+        val newElement = cinemaElement.copyLocalCinemaElementParameters(
+            isWatched = isWatched,
+            watchedAt = if (isWatched) System.currentTimeMillis() else cinemaElement.watchedAt
+        )
+        when(newElement) {
+            is Movie -> cinemaDao.updateMovie(newElement.toEntity())
+            is Tv -> cinemaDao.updateTv(newElement.toEntity())
+        }
     }
 
     override fun getNumberOfViewsSince(sinceTime: Long): Flow<Int> {
@@ -30,8 +37,9 @@ class WatchListDbRepository @Inject constructor(val cinemaDao: CinemaDao): Watch
         val isDisplayedBool = if (isDisplayed) 1 else 0
         return cinemaDao.getMoviesFromWatchList(isDisplayedBool).combine(cinemaDao.getTvsFromWatchList(isDisplayedBool)) { movies, tvs ->
             val combinedList = mutableListOf<CinemaElement>()
-            combinedList.addAll(movies)
-            combinedList.addAll(tvs)
+            combinedList.addAll(movies.map { it.toDomain() })
+            combinedList.addAll(tvs.map { it.toDomain() })
+            Log.d("TAG", "getCinemaElementsFromWatchList: $movies")
             combinedList.sortedByDescending {
                 it.addTime
             }
@@ -39,8 +47,12 @@ class WatchListDbRepository @Inject constructor(val cinemaDao: CinemaDao): Watch
     }
 
     override suspend fun removeItemFromWatchList(cinemaElement: CinemaElement) {
-        cinemaElement.isDisplayedInWatchList = false
-        if (cinemaElement is Movie) cinemaDao.updateMovie(cinemaElement)
-        if (cinemaElement is Tv) cinemaDao.updateTv(cinemaElement)
+        val newElement = cinemaElement.copyLocalCinemaElementParameters(
+            isDisplayedInWatchList = false
+        )
+        when(newElement) {
+            is Movie -> cinemaDao.updateMovie(newElement.toEntity())
+            is Tv -> cinemaDao.updateTv(newElement.toEntity())
+        }
     }
 }

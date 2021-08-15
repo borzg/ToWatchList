@@ -2,6 +2,7 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="1.8">
+      <module name="ToWatchList.buildSrc" target="11" />
       <module name="ToWatchList.data" target="11" />
       <module name="ToWatchList.presentation" target="11" />
     </bytecodeTargetLevel>

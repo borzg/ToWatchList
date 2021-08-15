@@ -1,24 +1,31 @@
 package com.borzg.towatchlist.ui.search
 
-import androidx.hilt.Assisted
-import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.borzg.domain.service.SearchService
-import com.borzg.domain.model.search.SearchResult
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
+import javax.inject.Inject
 
-class SearchViewModel @ViewModelInject constructor(
+@HiltViewModel
+class SearchViewModel @Inject constructor(
     private val searchService: SearchService,
-    @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery = _searchQuery.asStateFlow()
 
-    var currentQuery: String = ""
+    fun setNewQuery(newQuery: String) {
+        _searchQuery.value = newQuery
+    }
 
-    fun searchData(query: String): Flow<PagingData<SearchResult>> =
-        searchService.getMultiSearchResult(query).cachedIn(viewModelScope)
-
+    @FlowPreview
+    @ExperimentalCoroutinesApi
+    val searchResults = searchQuery.debounce(800).flatMapLatest { query ->
+        if (query.isBlank()) flowOf(PagingData.empty())
+        else searchService.getMultiSearchResult(query)
+    }.stateIn(viewModelScope, SharingStarted.Lazily, initialValue = PagingData.empty()).cachedIn(viewModelScope)
 }

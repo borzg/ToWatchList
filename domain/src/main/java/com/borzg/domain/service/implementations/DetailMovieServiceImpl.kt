@@ -1,28 +1,21 @@
 package com.borzg.domain.service.implementations
 
-import com.borzg.domain.model.DB
-import com.borzg.domain.model.Server
+import com.borzg.domain.DB
+import com.borzg.domain.Server
 import com.borzg.domain.repository.DetailCinemaRepository
 import com.borzg.domain.model.Movie
-import com.borzg.domain.model.search.SearchResult
+import com.borzg.domain.model.search.MovieSearchResult
 import com.borzg.domain.repository.AdditionalCinemaRepository
 import com.borzg.domain.service.DetailMovieService
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
-class DetailMovieServiceImpl @Inject constructor() : DetailMovieService {
-
-    @Inject
-    @Server
-    lateinit var detailServerCinemaRepository: DetailCinemaRepository
-
-    @Inject
-    @DB
-    lateinit var detailDBCinemaRepository: DetailCinemaRepository
-
-    @Inject
-    lateinit var additionalCinemaRepository: AdditionalCinemaRepository
+class DetailMovieServiceImpl @Inject constructor(
+    private val additionalCinemaRepository: AdditionalCinemaRepository,
+    @param:DB private val detailDBCinemaRepository: DetailCinemaRepository,
+    @param:Server private val detailServerCinemaRepository: DetailCinemaRepository
+) : DetailMovieService {
 
     var movieStateKeeper: Movie? = null
         @Synchronized get
@@ -41,14 +34,14 @@ class DetailMovieServiceImpl @Inject constructor() : DetailMovieService {
                 movieStateKeeper = movie
             } else {
                 // When element comes from server
-                movie.copyCinemaElementParametersFrom(movieStateKeeper!!)
-                movieStateKeeper = movie
-                detailDBCinemaRepository.updateMovie(movie)
+                val newMovie: Movie = movie.copyCinemaElementParametersFrom(movieStateKeeper!!)
+                movieStateKeeper = newMovie
+                detailDBCinemaRepository.updateMovie(newMovie)
             }
         }
     }
 
-    override fun getSimilarMovies(movieId: Int): Flow<List<SearchResult.MovieSearchResult>> =
+    override fun getSimilarMovies(movieId: Int): Flow<List<MovieSearchResult>> =
         additionalCinemaRepository.getSimilarMovies(movieId)
 
     override suspend fun addMovieToWatchList(movie: Movie) {

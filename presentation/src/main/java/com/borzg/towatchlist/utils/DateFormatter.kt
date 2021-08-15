@@ -2,7 +2,6 @@ package com.borzg.towatchlist.utils
 
 import android.content.Context
 import com.borzg.towatchlist.R
-import java.lang.StringBuilder
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -51,9 +50,6 @@ const val MILLISECOND_SECOND = 1000L
 const val MILLISECOND_MINUTE = MILLISECOND_SECOND * 60
 const val MILLISECOND_HOUR = MILLISECOND_MINUTE * 60
 const val MILLISECOND_DAY = MILLISECOND_HOUR * 24
-//const val MILLISECOND_WEEK = MILLISECOND_DAY * 7
-//const val MILLISECOND_MONTH_AVERAGE = MILLISECOND_DAY * 30
-//const val MILLISECOND_YEAR = MILLISECOND_DAY * 365
 
 fun Long?.millisecondsToTimePeriod(context: Context): String {
     if (this == null) return ""
