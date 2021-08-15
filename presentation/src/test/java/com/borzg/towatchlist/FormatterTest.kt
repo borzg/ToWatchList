@@ -6,6 +6,10 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class FormatterTest {
+    @Test
+    fun failTest() {
+        assertEquals(0, 1)
+    }
 
     @Test
     fun numberFormatter_numberByDigitsIsCorrect() {
