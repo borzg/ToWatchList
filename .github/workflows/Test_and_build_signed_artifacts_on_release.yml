@@ -28,7 +28,13 @@ jobs:
           token: ${{ secrets.KEYSTORE_ACCESS_TOKEN }}
           path: presentation/keystore
 
-      - name: "Check file existence"
-        uses: andstor/file-existence-action@v1
-        with: 
-          files: "toWatchListKeystore.jks"
+      - name: Run tests and build release artifacts
+        run: |
+          ./gradlew test
+          ./gradlew assembleRelease --stacktrace
+          
+      - name: Upload signed APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: presentation-release.apk
+          path: presentation/build/outputs/apk/release/presentation-release.apk
