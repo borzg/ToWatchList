@@ -32,13 +32,9 @@ jobs:
         run: |
           ./gradlew test
           ./gradlew assembleRelease --stacktrace
-
-      - name: Create a directory 
-        run: |	
-            mkdir -p presentation/releaseApk
-            
+          
       - name: Upload signed APK
         uses: actions/upload-artifact@v2
         with:
-          name: app-release.apk
-          path: presentation/releaseApk/app-release.apk
+          name: presentation-release.apk
+          path: presentation/build/outputs/pk/release/presentation-release.apk
